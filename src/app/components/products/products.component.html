@@ -1,0 +1,66 @@
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="breadcrumb-header">Products</h3>
+        <!--        <ul class="breadcrumb-tree">-->
+        <!--          <li><a href="#">Home</a></li>-->
+        <!--          <li class="active">Products</li>-->
+        <!--        </ul>-->
+      </div>
+    </div>
+    <!-- /row -->
+  </div>
+  <!-- /container -->
+</div>
+<!-- /BREADCRUMB -->
+
+<div class="section">
+  <div class="container">
+    <mat-card class="col-md-12">
+      <div class="row">
+        <div class="col-md-3 col-sm-6" *ngFor="let product of this.productsList|paginate: { id: 'listing_pagination',
+                                                      itemsPerPage: 8,
+                                                      currentPage: page,
+                                                      totalItems: productsList.length }">
+          <div class="product">
+            <div class="product-img">
+              <img [src]="product.image" (click)="selectProduct(product.id)" alt="{{product.title}}">
+              <div class="product-label">
+                <span class="sale" *ngIf="product.discount > 0">-{{product.discount}}%</span>
+                <!-- <span class="new">NEW</span>-->
+              </div>
+            </div>
+            <hr>
+            <div class="product-body">
+              <h3 class="product-name"><a (click)="selectProduct(product.id)">{{product.title}}</a></h3>
+              <p class="product-category">{{product.category}}</p>
+              <h4 class="product-price" *ngIf="product.discount === 0">
+                {{product.price | currency:'TZS':'Tsh '}}</h4>
+              <h4 class="product-price" *ngIf="product.discount > 0">
+                {{product.price - (product.price * (product.discount/100)) | currency:'TZS':'Tsh '}}
+                <del class="product-old-price">{{product.price | currency:'TZS':'Tsh '}}</del></h4>
+              <div class="">
+                <button class="primary-btn" [class.disabled]="product.quantity < 1"
+                        [class.warning-btn]="product.quantity < 1"
+                        (click)="addToCart(product.id)" [disabled]="product.quantity < 1">
+                  {{ product.quantity < 1 ? "NO STOCK" : "Add To Cart"}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+
+
+    <div class="col-md-12 pagination">
+
+        <pagination-controls class="pull-right" id="listing_pagination" maxSize="4" previousLabel="Prev" nextLabel="Next" responsive="true"
+                             (pageChange)="page = $event"></pagination-controls>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+    <div class="row">
+      <div class="col-md-12">
+        <h3 class="breadcrumb-header">Carts</h3>
+        <!--        <ul class="breadcrumb-tree">-->
+        <!--          <li><a href="#">Home</a></li>-->
+        <!--          <li class="active">Products</li>-->
+        <!--        </ul>-->
+      </div>
+    </div>
+    <!-- /row -->
+  </div>
+  <!-- /container -->
+</div>
+<!-- /BREADCRUMB -->
+
+<div class="section">
+  <div class="container">
+    <div class="row">
+
+      <div *ngIf="cartData.data[0].numInCart === 0;" class="col-md-12">
+        <div class="text-center my-5">
+          <div class="alert alert-warning">
+            <h4>Your Cart Is Empty</h4>
+          </div>
+          <button class="primary-btn btn-lg mt-3" routerLink="/products">GO TO SHOP</button>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <mat-card *ngIf="cartData.data[0].numInCart !== 0">
+          <table class="table">
+            <thead class="table-light">
+            <tr class="text-center">
+              <th>Image</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let cart of cartData.data; let i=index">
+              <td class="d-flex align-items-center justify-content-around" >
+                <img [src]="cart.product.image" alt="" class="order-1" height="60">
+                <span class="text-danger" style="cursor: pointer;">
+                        <i class="fa fa-trash" (click)="cartService.DeleteProductFromCart(i)"></i>
+                      </span>
+              </td>
+              <td><p>{{cart.product.name}}</p></td>
+              <td><p>{{cart.product.categoryName}}</p></td>
+              <td>
+                <form>
+                  <div class="qty-label">
+                    <div class="input-number">
+                      <input type="number" [value]="cart.numInCart" readonly [max]="cart.product.quantity">
+                      <span (click)="ChangeQuantity(i, true)" class="qty-up text-success">+</span>
+                      <span (click)="ChangeQuantity(i, false)" class="qty-down text-danger">-</span>
+                    </div>
+                  </div>
+                </form>
+              </td>
+              <td><p>{{cart.product.price | currency:'TZS':'Tsh '}}</p></td>
+              <td><p>{{cartService.CalculateSubTotal(i) | currency:'TZS':'Tsh '}}</p></td>
+            </tr>
+            <tr class="border-0">
+              <td style="border: none;"></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>TOTAL</td>
+              <td>{{ cartTotal | currency:'TZS':'Tsh '}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </mat-card>
+      </div>
+
+      <div *ngIf="cartData.data[0].numInCart !== 0" class="col-md-12" id="shop-chek">
+        <a routerLink="/products" class="primary-btn btn-sm header-links pull-left">Continue Shopping</a>
+        <a routerLink="/checkout" class="success-btn btn-sm header-links pull-right">Checkout</a>
+      </div>
+    </div>
+  </div>
+</div>

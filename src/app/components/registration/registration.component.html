@@ -1,0 +1,72 @@
+<ngx-spinner
+  bdColor= "rgba(151,149,149,0.4)" size="large" color="orange"
+  type="ball-clip-rotate-pulse" fullScreen="true">
+  <p style="font-size: 20px; color: black">Booking Order...</p>
+</ngx-spinner>
+
+<!-- SECTION -->
+<div class="section">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+    <div class="row">
+      <div class="caption">
+        <form #registrationForm="ngForm" (ngSubmit)="registerUser(registrationForm)">
+          <div class="col-md-6">
+            <mat-card-title>Registration Form</mat-card-title>
+              <div class="form-group">
+                <input name="firstName" ngModel required #firstName="ngModel"
+                       id="firstName" placeholder="First Name" class="input" autocomplete="off" type="text" >
+              </div>
+              <div class="form-group">
+                <input name="lastName" ngModel required #lastName="ngModel"
+                       id="lastName" placeholder="Last Name" class="input" autocomplete="off" type="text" >
+              </div>
+              <div class="form-group">
+                <input name="email" ngModel required #email="ngModel"
+                       id="email" placeholder="email" class="input" autocomplete="off" type="email" >
+              </div>
+              <div class="form-group">
+                <input name="region" ngModel required #region="ngModel"
+                       id="region" placeholder="region" class="input" autocomplete="off" type="text" >
+              </div>
+              <div class="form-group">
+                <input name="district" ngModel required #district="ngModel"
+                       id="district" placeholder="district" class="input" autocomplete="off" type="text" >
+              </div>
+              <div class="form-group">
+                <input name="phone" ngModel required #phone="ngModel"
+                       id="phone" placeholder="phone" class="input" autocomplete="off" type="tel" >
+              </div>
+              <div class="form-group">
+                <div class="input-checkbox">
+                  <input type="checkbox" id="create-account">
+                  <label for="create-account"><span></span>Done</label>
+                </div>
+              </div>
+          </div>
+
+          <div class="col-md-6">
+            <mat-card-title>Login Credentials</mat-card-title>
+            <div class="form-group">
+              <input name="username" ngModel required #username="ngModel"
+                     id="username" placeholder="username" class="input" autocomplete="off" type="text" >
+
+            </div>
+            <div class="form-group">
+              <input name="password" ngModel required #password="ngModel"
+                     id="password" placeholder="password" class="input" autocomplete="off" type="password" >
+
+            </div>
+
+            <div class="form-group">
+              <button [disabled]="registrationForm.invalid" class="primary-btn order-submit pull-right" type="submit">Create Acount
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

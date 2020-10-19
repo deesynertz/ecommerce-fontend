@@ -24,13 +24,20 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
-              "src/favicon.ico",
+              "src/assets/favicon.png",
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+              "./node_modules/ngx-toastr/toastr.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/js/jquery.min.js",
+              "src/assets/js/bootstrap.min.js",
+              "src/assets/js/slick.min.js",
+              "src/assets/js/nouislider.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -92,9 +99,17 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/js/jquery.min.js",
+              "src/assets/js/bootstrap.min.js",
+              "src/assets/js/slick.min.js",
+              "src/assets/js/nouislider.min.js",
+              "src/assets/js/jquery.zoom.min.js",
+              "src/assets/js/main.js"
+            ]
           }
         },
         "lint": {
@@ -123,6 +138,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "angular-fontend"
+    }
+  },
+  "defaultProject": "angular-fontend",
+  "cli": {
+    "analytics": "0a5ef82a-a44a-449a-8ab2-e1c4a4d04f1b"
+  }
 }
