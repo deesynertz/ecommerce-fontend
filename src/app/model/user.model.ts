@@ -15,3 +15,15 @@ export interface ResponseModel {
   userId: number;
   role: number;
 }
+
+
+//ROLES INTERFACE
+export interface RolesResponseModel {
+  roleId: number,
+  roleName: string,
+  createdOn: string,
+}
+export interface RolesExportModel{
+  count: number;
+  roles: RolesResponseModel[];
+}

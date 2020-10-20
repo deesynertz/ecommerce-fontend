@@ -16,6 +16,7 @@ export const singleOrderUrl = base_url + '/orders/'
 export const newOrderUrl = base_url + '/orders/new'
 export const paymentOrderUrl = base_url + '/orders/payment'
 
+export const userRoleUrl = base_url + '/auth/roles'
 export const loginUserUrl = base_url + '/auth/login'
 export const registerUserUrl = base_url + '/auth/register'
 export const findUserByEmailUrl = base_url + '/auth/'

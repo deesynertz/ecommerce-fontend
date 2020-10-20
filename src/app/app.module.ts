@@ -43,7 +43,7 @@ import { AlertModule } from "ngx-alerts";
     FormsModule,
     ReactiveFormsModule,
     SocialLoginModule,
-    AlertModule.forRoot({maxMessages: 5, timeout: 5000, positionX: 'right', positionY: 'top'})
+    AlertModule.forRoot({maxMessages: 5, timeout: 5000, positionX: 'right'})
   ],
   providers: [
     {

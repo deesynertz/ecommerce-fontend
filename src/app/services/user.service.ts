@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {SocialAuthService, SocialUser} from 'angularx-social-login';
-import {loginUserUrl, registerUserUrl} from "../config/api";
-import {ResponseModel, UserRegistrationResponse} from "../model/user.model";
+import {loginUserUrl, registerUserUrl, userRoleUrl} from "../config/api";
+import {ResponseModel, RolesExportModel, UserRegistrationResponse} from "../model/user.model";
 import {catchError, map} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
@@ -25,22 +25,21 @@ export class UserService {
               private authService: SocialAuthService,
               private fb: FormBuilder) { }
 
+  getRoles(): Observable<RolesExportModel>{
+    return this.http.get<RolesExportModel>(userRoleUrl);
+  }
+
 
   registerUser(formData: any, photoUrl?: string, typeOfUser?: string): Observable<any> {
-    const {firstName,lastName,region,district,phone,email,username,password} = formData;
+    const {firstName,lastName,region,district,phone,email,username,password,role_id} = formData;
 
     return this.http.post<any>(registerUserUrl, {
-       firstName,lastName,region,district,phone,email,username,password
+       firstName,lastName,region,district,phone,email,username,password,role_id
     });
   }
 
-  login(username:string, password){
-    return this.http.post(loginUserUrl, {username, password}).pipe(
-      map((response: any) => {
-        // const user = response;
-        console.log(response);
-      })
-    )
+  login(username:string, password:string): Observable<any>{
+    return this.http.post(loginUserUrl, {username, password});
   }
 
   loginUser(username: string, password: string) {

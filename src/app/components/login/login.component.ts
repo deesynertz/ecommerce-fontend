@@ -41,25 +41,22 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    loginForm.reset();
-    this.userService.loginUser(username,password);
+    this.userService.login(username,password).subscribe((response:any) => {
 
+      if(response.success_code === 1){
+        loginForm.reset();
+        console.log(response);
+      }else{
+        this.updateMessage(response.message);
+        //this.alertService.danger(`${response.message}`);
+      }
 
-    // this.alertService.danger('this is a danger alert');
-    // this.alertService.success('this is a success alert');
-
-    // this.userService.loginMessage$.subscribe(msg => {
-    //   this.loginMessage = msg;
-    //   this.updateCartMessage(msg);
-    //   setTimeout(() => {
-    //     this.loginMessage = '';
-    //   }, 2000);
-    // });
+    });
   }
 
-  updateCartMessage(loginMessage: string) {
-    this.toast.info(`${loginMessage}`, "Login", {
-      timeOut: 1500,
+  updateMessage(message) {
+    this.toast.warning(`${message}`, "Login", {
+      timeOut: 2500,
       progressBar: true,
       progressAnimation: 'increasing',
       positionClass: 'toast-top-right'

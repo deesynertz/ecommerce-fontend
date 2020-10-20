@@ -9,9 +9,6 @@
           <mat-card-title class="text-center">
             LOGIN
           </mat-card-title>
-          <div class="col-md-12">
-            <ngx-alerts></ngx-alerts>
-          </div>
           <form #loginForm="ngForm" autocomplete="off" (ngSubmit)="login(loginForm)">
             <div class="form-group">
               <label for="username">Email</label>
@@ -23,7 +20,7 @@
               <input class="form-control" id="password" type="password" ngModel required #password="ngModel" name="password">
             </div>
             <div class="d-flex flex-column align-items-center justify-content-around">
-              <button class="btn success-btn btn-sm btn-block" [disabled]="loginForm.invalid && loginForm.touched">Login</button>
+              <button type="submit" class="btn success-btn btn-sm btn-block" [disabled]="loginForm.invalid && loginForm.touched">Login</button>
             </div>
           </form>
         </mat-card>

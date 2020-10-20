@@ -51,12 +51,17 @@
             <div class="form-group">
               <input name="username" ngModel required #username="ngModel"
                      id="username" placeholder="username" class="input" autocomplete="off" type="text" >
-
             </div>
             <div class="form-group">
               <input name="password" ngModel required #password="ngModel"
                      id="password" placeholder="password" class="input" autocomplete="off" type="password" >
+            </div>
 
+            <div class="form-group">
+              <select name="role_id" ngModel required #role_id="ngModel" class="input" id="role_id">
+                <option value="" disabled>Select your roles</option>
+                <option *ngFor="let role of roleList" [value]="role.roleId">{{role.roleName}}</option>
+              </select>
             </div>
 
             <div class="form-group">
