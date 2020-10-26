@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {NgForm, Validators} from "@angular/forms";
-import {RolesResponseModel, UserRegistrationResponse} from "../../model/user.model";
+import {NgForm} from "@angular/forms";
+import {RolesResponseModel} from "../../model/user.model";
 import {UserService} from "../../services/user.service";
-import {AlertService} from "ngx-alerts";
 import {ToastrService} from "ngx-toastr";
 
 @Component({
@@ -15,7 +14,6 @@ export class RegistrationComponent implements OnInit {
   roleList: RolesResponseModel[] = [];
 
   constructor(private userService: UserService,
-              private alertService: AlertService,
               private toast: ToastrService) {
     // TODO: VALIDATE THE FIELD
 

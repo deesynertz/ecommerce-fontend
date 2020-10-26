@@ -10,6 +10,9 @@ import { ProductsComponent } from './components/products/products.component';
 import { SingleProductComponent } from "./components/single-product/single-product.component";
 import { ProfileComponent } from "./components/profile/profile.component";
 import { RegistrationComponent } from './components/registration/registration.component';
+import { ProfileOrdersComponent } from './profile-orders/profile-orders.component';
+import { ProfileProdComponent } from './profile-prod/profile-prod.component';
+import { ProfileViewComponent } from './profile-view/profile-view.component';
 
 
 
@@ -34,5 +37,8 @@ export class AppRoutingModule { }
 export const RoutingModules = [
   HomeComponent, ProductsComponent,LoginComponent,
   CartComponent, CheckoutComponent, ProfileComponent,
-  ConformationComponent,SingleProductComponent,RegistrationComponent
+  ConformationComponent, SingleProductComponent, RegistrationComponent,
+  ProfileViewComponent,
+  ProfileProdComponent,
+  ProfileOrdersComponent
 ]

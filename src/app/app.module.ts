@@ -17,6 +17,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrModule } from 'ngx-toastr';
 import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from "angularx-social-login";
 import { AlertModule } from "ngx-alerts";
+import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
 
 
 
@@ -26,8 +27,8 @@ import { AlertModule } from "ngx-alerts";
     HeaderComponent,
     FooterComponent,
     RoutingModules,
-    FilterPipe
-
+    FilterPipe,
+    ProfileMenuComponent
   ],
   imports: [
     BrowserModule,
