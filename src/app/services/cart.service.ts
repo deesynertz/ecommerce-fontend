@@ -9,6 +9,7 @@ import { ProductsService } from './products.service';
 import { OrderService } from './order.service';
 import { CartModelPublic, CartModelServer } from '../model/cart.model';
 import { newOrderUrl, paymentOrderUrl } from '../config/api';
+import { SharedService } from './shared.service';
 
 
 @Injectable({
@@ -44,16 +45,16 @@ export class CartService {
     private orderService: OrderService,
     private router: Router,
     private spinner: NgxSpinnerService,
-    private toast: ToastrService) {
+    private toast: ToastrService,
+    private sharedService: SharedService
+  ) {
 
     this.cartTotal$.next(this.cartDataServer.total);
 
     this.cartData$.next(this.cartDataServer);
 
-
     // get the information from local storage if any
     let info: CartModelPublic = JSON.parse(localStorage.getItem('cart'));
-
 
     if (info !== null && info !== undefined && info.prodData[0].incart !== 0) {
       /* assign the value to our data variable which corresponds to the LocalStorage
@@ -102,7 +103,7 @@ export class CartService {
         this.cartDataClient.prodData[0].id = prod.id;
         this.cartDataClient.total = this.cartDataServer.total;
         localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
-        this.successCartMessage(prod.title);
+        this.sharedService.successToaster(prod.title, 'Product Added');
       }
       // 2: Cart is not empty
       else {
@@ -119,7 +120,7 @@ export class CartService {
           }
 
           this.cartDataClient.prodData[index].incart = this.cartDataServer.data[index].numInCart;
-          this.updateCartMessage(prod.title);
+          this.sharedService.infoToaster(prod.title, 'Product Updated');
         }
         //  B. If chosen product is not in cart array
         else {
@@ -132,7 +133,7 @@ export class CartService {
             id: prod.id
           });
 
-          this.successCartMessage(prod.title);
+          this.sharedService.successToaster(prod.title, 'Product Added');
 
         }
 
@@ -205,35 +206,6 @@ export class CartService {
     else {
       return;
     }
-
-
-  }
-
-  successCartMessage(name: string) {
-    this.toast.success(`${name} added to the cart.`, "Product Added", {
-      timeOut: 1500,
-      progressBar: true,
-      progressAnimation: 'increasing',
-      positionClass: 'toast-top-right'
-    })
-  }
-
-  updateCartMessage(name: string) {
-    this.toast.info(`${name} quantity updated in the cart.`, "Product Updated", {
-      timeOut: 1500,
-      progressBar: true,
-      progressAnimation: 'increasing',
-      positionClass: 'toast-top-right'
-    })
-  }
-
-  errorCartMessage() {
-    this.toast.error(`Sorry, failed to book the order`, "Order Status", {
-      timeOut: 1500,
-      progressBar: true,
-      progressAnimation: 'increasing',
-      positionClass: 'toast-top-right'
-    })
   }
 
   CalculateSubTotal(index): number {
@@ -300,7 +272,7 @@ export class CartService {
       } else {
         this.spinner.hide();
         this.router.navigateByUrl('/checkout').then();
-        this.errorCartMessage();
+        this.sharedService.errorToaster('Sorry, failed to book the order', "Order Status");
       }
     })
   }

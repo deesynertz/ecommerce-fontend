@@ -4,12 +4,9 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule, RoutingModules } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './components/header/header.component';
-import { FooterComponent } from './components/footer/footer.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from './angular-material.module';
-import { FilterPipe } from './pipes/filter.pipe';
 import { FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -17,18 +14,22 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrModule } from 'ngx-toastr';
 import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from "angularx-social-login";
 import { AlertModule } from "ngx-alerts";
-import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
+import { SharedModule } from './shared/shared.module';
+import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
+import { PaymentModule } from './payment/payment.module';
+import { ProfileModule } from './profile/profile.module';
+import { ComfirmComponent } from './components/comfirm/comfirm.component';
+import { AddProductComponent } from './profile/add-product/add-product.component';
+import { DatePipe } from '@angular/common';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
-    FooterComponent,
     RoutingModules,
-    FilterPipe,
-    ProfileMenuComponent
+    ComfirmComponent
   ],
   imports: [
     BrowserModule,
@@ -41,10 +42,17 @@ import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
     NgxPaginationModule,
     NgxSpinnerModule,
     ToastrModule.forRoot(),
-    FormsModule,
     ReactiveFormsModule,
     SocialLoginModule,
-    AlertModule.forRoot({maxMessages: 5, timeout: 5000, positionX: 'right'})
+    AlertModule.forRoot({ maxMessages: 5, timeout: 5000, positionX: 'right' }),
+    
+
+
+    AuthModule,
+    PaymentModule,
+    ProfileModule,
+    ProductsModule,
+    SharedModule
   ],
   providers: [
     {
@@ -60,8 +68,11 @@ import { ProfileMenuComponent } from './profile-menu/profile-menu.component';
           },
         ],
       } as SocialAuthServiceConfig,
-    }
+    },
+    DatePipe,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [AddProductComponent, ComfirmComponent
+  ]
 })
 export class AppModule { }

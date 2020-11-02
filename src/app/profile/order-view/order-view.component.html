@@ -1,0 +1,102 @@
+<!-- BREADCRUMB -->
+<div id="breadcrumb" class="section">
+    <!-- container -->
+    <div class="container">
+      <!-- row -->
+      <div class="row">
+        <div class="col-md-12">
+          <h3 class="breadcrumb-header">Panel</h3>
+          <ul class="breadcrumb-tree">
+            <li class="active">Orders</li>
+          </ul>
+        </div>
+      </div>
+      <!-- /row -->
+    </div>
+    <!-- /container -->
+  </div>
+  <!-- /BREADCRUMB -->
+  
+  <!-- SECTION -->
+  <div class="section">
+    <!-- container -->
+    <div class="container">
+      <!-- row -->
+      <div class="row">
+        <!--  NAV BAR    -->
+        <app-side-bar></app-side-bar>
+        <!-- STORE -->
+        <div id="store" class="col-md-9">
+          <!-- store top filter -->
+          <div class="store-filter clearfix">
+            <div class="store-sort">
+                <mat-form-field class="search-form-field" floatLabel="never">
+                    <input matInput [(ngModel)]="searchKey" placeholder="Search" autocomplete="off" (keyup)="applyFilter()">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" *ngIf="searchKey" (click)="onSearchClear()">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+            <ul class="store-grid">
+              <li class="active"><i class="fa fa-th"></i></li>
+              <li><a><i class="fa fa-th-list"></i></a></li>
+            </ul>
+          </div>
+          <!-- /store top filter -->
+
+          <div class="mat-elevation-z8">
+            <mat-table [dataSource]="orderDataSource" matSort>
+              <ng-container matColumnDef="Id">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+                <mat-cell *matCellDef="let item">{{item.id}}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="Title">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Title</mat-header-cell>
+                <mat-cell *matCellDef="let item">{{item.title}}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="qty">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>QTY</mat-header-cell>
+                <mat-cell *matCellDef="let item">{{item.odQuantity}}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="Price">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>Price</mat-header-cell>
+                <mat-cell *matCellDef="let item">{{item.price | currency: 'TZS' : 'Tsh '}}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="CreatedOn">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>CreatedOn</mat-header-cell>
+                <mat-cell *matCellDef="let item">{{item.orderDate | date }}</mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="Status">
+                <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                  pending..
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="loading">
+                <mat-footer-cell *matFooterCellDef colspan="6">
+                  Loading data...
+                </mat-footer-cell>
+              </ng-container>
+              <ng-container matColumnDef="noData">
+                <mat-footer-cell *matFooterCellDef colspan="6">
+                  No data.
+                </mat-footer-cell>
+              </ng-container>
+              <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+              <mat-footer-row *matFooterRowDef="['loading']" [ngClass]="{'hide':orderDataSource!=null}"></mat-footer-row>
+              <mat-footer-row *matFooterRowDef="['noData']"
+                              [ngClass]="{'hide':!(orderDataSource!=null && orderDataSource.data.length==0)}"></mat-footer-row>
+            </mat-table>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>
+          </div>
+        </div>
+        <!-- /STORE -->
+  
+      </div>
+      <!-- /row -->
+    </div>
+    <!-- /container -->
+  </div>
+  <!-- /SECTION -->
+  

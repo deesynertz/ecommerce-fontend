@@ -1,0 +1,32 @@
+form.normal-form-product {
+  margin: 10px;
+}
+
+.controles-container {
+  width: 100%;
+  padding: 5%;
+}
+
+.controles-container>* {
+  width: 100%;
+}
+
+.add-bottom-padding {
+  padding-bottom: 10px;
+}
+
+.button-row button {
+  margin: 5px 5px 10px 5px;
+}
+
+/* for dialog pop-up */
+#close-icon {
+//   width: 40px;
+//   min-width: 0px !important;
+//   height: 40px;
+//   padding: 0px !important;
+  margin-left: auto;
+  order: 2;
+  font-weight: bolder;
+  cursor: pointer;
+}

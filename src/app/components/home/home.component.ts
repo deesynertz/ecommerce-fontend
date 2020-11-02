@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {NgbCarouselConfig} from "@ng-bootstrap/ng-bootstrap";
-import {ProductsService} from "../../services/products.service";
-import {ProductModelServer, productServerResponse} from "../../model/products.model";
+import { ProductModelServer, productServerResponse } from 'src/app/model/products.model';
+import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
   selector: 'app-home',
@@ -17,10 +16,20 @@ export class HomeComponent implements OnInit {
   }
 
 
-  ngOnInit(): void {
-    this.productsService.getAllProducts(3).subscribe((prods: productServerResponse) => {
+  ngOnInit() {
+    this.productsService.getAllProducts(1).subscribe((prods: productServerResponse) => {
       this.productsList = prods.products;
     });
+
+    
   }
+
+  getImage(prodImage: string) {
+    let imageP;
+    return this.productsService.getImageFromBackend(prodImage).subscribe((image: string) => {
+      imageP = image;
+    });
+  }
+
 
 }
