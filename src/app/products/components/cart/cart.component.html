@@ -1,3 +1,9 @@
+<ngx-spinner
+  bdColor="rgba(151,149,149,0.4)" size="large" color="green"
+  type="ball-clip-rotate-pulse" fullScreen="true">
+  <p style="font-size: 20px; color: black">Booking Order...</p>
+</ngx-spinner>
+
 <!-- BREADCRUMB -->
 <div id="breadcrumb" class="section">
     <!-- container -->
@@ -17,11 +23,11 @@
     <!-- /container -->
   </div>
   <!-- /BREADCRUMB -->
-  
+
   <div class="section">
     <div class="container">
       <div class="row">
-  
+
         <div *ngIf="cartData.data[0].numInCart === 0;" class="col-md-12">
           <div class="text-center my-5">
             <div class="alert alert-warning">
@@ -40,7 +46,7 @@
                 <th>Category</th>
                 <th>Quantity</th>
                 <th>Price</th>
-                <th>Subtotal</th>
+                <th>Sub-Total</th>
               </tr>
               </thead>
               <tbody>
@@ -50,7 +56,7 @@
                     <i class="fa fa-trash" (click)="cartService.DeleteProductFromCart(i)"></i>
                   </span>
                   <img [src]="cart.product.image" alt="" class="order-1" height="60">
-                  
+
                 </td>
                 <td><p>{{cart.product.title}}</p></td>
                 <td><p>{{cart.product.category}}</p></td>
@@ -65,7 +71,7 @@
                     </div>
                   </form>
                 </td>
-                <td><p>{{cart.product.price | currency:'TZS':'Tsh '}}</p></td>
+                <td><p>{{cartService.handleDiscount(cart.product.price, cart.product.discount) | currency:'TZS':'Tsh '}}</p></td>
                 <td><p>{{cartService.CalculateSubTotal(i) | currency:'TZS':'Tsh '}}</p></td>
               </tr>
               <tr class="border-0">
@@ -80,12 +86,11 @@
             </table>
           </mat-card>
         </div>
-  
+
         <div *ngIf="cartData.data[0].numInCart !== 0" class="col-md-12" id="shop-chek">
           <a routerLink="/products" class="primary-btn btn-sm header-links pull-left">Continue Shopping</a>
-          <a routerLink="/checkout" class="success-btn btn-sm header-links pull-right">Checkout</a>
+          <a class="success-btn btn-sm header-links pull-right" (click)="onPlaceOrder()">Place Order</a>
         </div>
       </div>
     </div>
   </div>
-  

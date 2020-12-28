@@ -1,81 +1,29 @@
-import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable, of} from "rxjs";
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {SocialAuthService, SocialUser} from 'angularx-social-login';
-import {loginUserUrl, registerUserUrl, userRoleUrl} from "../config/api";
-import {ResponseModel, RolesExportModel, UserRegistrationResponse} from "../model/user.model";
-import {catchError, map} from "rxjs/operators";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {rolesOtherUrl, userProductsUrl, userProfileUrl} from '../config/api';
+import {RolesExportModel, userProfileModel, userProfileResponse} from '../model/user.model';
+import {productServerResponse} from '../model/products.model';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  auth = false;
-  private user;
-  authState$ = new BehaviorSubject<boolean>(this.auth);
-  userData$ = new BehaviorSubject<ResponseModel | object>(null);
-  loginMessage$ = new BehaviorSubject<string>(null);
-  userRole: number;
-
-  private emailPattern = '(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])';
-
-  constructor(private http: HttpClient,
-              private authService: SocialAuthService,
-              private fb: FormBuilder) { }
-
-  getRoles(): Observable<RolesExportModel>{
-    return this.http.get<RolesExportModel>(userRoleUrl);
+  constructor(private http: HttpClient) {
   }
 
-
-  registerUser(formData: any, photoUrl?: string, typeOfUser?: string): Observable<any> {
-    const {firstName,lastName,region,district,phone,email,username,password,role_id} = formData;
-
-    return this.http.post<any>(registerUserUrl, {
-       firstName,lastName,region,district,phone,email,username,password,role_id
-    });
+  getRoles(): Observable<RolesExportModel> {
+    return this.http.get<RolesExportModel>(`${rolesOtherUrl}`);
   }
 
-  login(username:string, password:string): Observable<any>{
-    return this.http.post(loginUserUrl, {username, password});
+  getUserProfile(userId: number): Observable<userProfileResponse>{
+    return this.http.get<userProfileResponse>(`${userProfileUrl}` + userId);
   }
 
-  loginUser(username: string, password: string) {
-    this.http.post<ResponseModel>(loginUserUrl, {username, password})
-      .pipe(catchError((err: HttpErrorResponse) => of(err.error.message)))
-      .subscribe((data: ResponseModel) => {
-        if (typeof (data) === 'string') {
-          this.loginMessage$.next(data);
-        } else {
-          this.auth = data.auth;
-          this.userRole = data.role;
-          this.authState$.next(this.auth);
-          this.userData$.next(data);
-        }
-      });
-  }
-
-  logout() {
-    this.authService.signOut().then();
-    this.auth = false;
-    this.authState$.next(this.auth);
-  }
-
-
-  validateForm() {
-
-    this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(4)]],
-      lastName: ['', [Validators.required, Validators.minLength(4)]],
-      email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
-      region: ['', [Validators.required, Validators.minLength(4)]],
-      district: ['', [Validators.required, Validators.minLength(4)]],
-      phone: ['', [Validators.required, Validators.minLength(10)]],
-      username: ['', [Validators.required, Validators.minLength(6)]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
+  getProductRespectToUser(userId: number): Observable<productServerResponse> {
+    return this.http.get<productServerResponse>(userProductsUrl + userId);
   }
 }
 

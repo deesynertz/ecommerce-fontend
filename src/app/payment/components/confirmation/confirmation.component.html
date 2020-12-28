@@ -1,0 +1,130 @@
+<div class="section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7 thanks-page" *ngIf="billTotal">
+        <mat-card class="receipt_bg">
+          <button class="btn-sm btn-info pull-right" [routerLink]="['/checkout']">close</button>
+          <mat-card-title class="text-center mt-5 pt-5">
+            <p class="">Receipt from {{ compName }}</p>
+            <P><small class="text-muted">Receipt # <span class="text-info">{{ receiptNo }}</span>  for Order # <span class="text-success">{{orderId}}</span></small></P>
+          </mat-card-title>
+          <mat-card-content class="receipt-content">
+            <div class="row">
+              <div class="col-md-4">
+                <h5 class="text-muted">AMOUNT PAID</h5>
+              </div>
+              <div class="col-md-4">
+                <h5 class="text-muted">DATE PAID</h5>
+              </div>
+              <div class="col-md-4">
+                <h5 class="text-muted">PAYMENT METHOD</h5>
+
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <h6 class="text-muted">{{ billTotal | currency:'TZS':'Tsh '}}</h6>
+              </div>
+              <div class="col-md-4">
+                <h6 class="text-muted">{{ today | date }}</h6>
+              </div>
+              <div class="col-md-4">
+                <h6 class="text-muted"><span class="method">{{card_method}}</span> - {{ cardLast4 }}</h6>
+
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 summary-title">
+                <h5 class="text-muted">SUMMARY</h5>
+              </div>
+            </div>
+
+            <div class="summary-content">
+              <div class="data-summary">
+                <div class="row" *ngFor="let item of products">
+                  <div class="col-md-6">
+                    <p>{{ item.title}}</p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="text-right">{{(item.quantity * item.price) | currency:'TZS':'Tsh '}}</p>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-6">
+                    <h4>Amount charged</h4>
+                  </div>
+                  <div class="col-md-6">
+                    <h4 class="text-right" *ngIf="!billTotal">{{ 0 | currency:'TZS':'Tsh '}}</h4>
+                    <h4 class="text-right" *ngIf="billTotal">{{ billTotal | currency:'TZS':'Tsh '}}</h4>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </mat-card-content>
+          <div class="receipt-footer">
+            <hr>
+            <h6>Thank you: {{ buyerName }}</h6>
+            <p>If you have any question, contact us at <a href=""> {{ email }} </a></p>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--<div class="container">-->
+<!--  <div class="row">-->
+<!--    <div class="col-md-12">-->
+<!--      <div class="jumbotron text-center">-->
+<!--        <h1 class="display-3">Thank You!</h1>-->
+<!--        <p class="lead"><strong>Please check your email</strong> for order confirmation.</p>-->
+<!--        <hr>-->
+<!--        <p>-->
+
+<!--        <p>Order Id : <strong>{{orderId}}</strong></p>-->
+<!--      </div>-->
+
+<!--      <mat-card class="col-md-12 mb-3">-->
+<!--        <table class="table">-->
+<!--          <thead class="table-light">-->
+<!--          <tr class="text-center">-->
+<!--            <th>Image</th>-->
+<!--            <th>Title</th>-->
+<!--            <th>Quantity</th>-->
+<!--            <th>Price</th>-->
+<!--            <th>Subtotal</th>-->
+<!--          </tr>-->
+<!--          </thead>-->
+<!--          <tbody>-->
+<!--          <tr *ngFor="let item of products" class="text-center">-->
+<!--            <td class="d-flex align-items-center justify-content-around" >-->
+<!--              <img [src]="item.image" alt="{{item.title}}" class="order-1" height="60">-->
+<!--            </td>-->
+<!--            <td><p>{{item.title}}</p></td>-->
+<!--            <td><p>{{item.quantity }}</p></td>-->
+<!--            <td><p>{{item.price | currency:'TZS':'Tsh '}}</p></td>-->
+<!--            <td><p>{{(item.quantity * item.price) | currency:'TZS':'Tsh '}}</p></td>-->
+<!--          </tr>-->
+<!--          <tr class="border-0">-->
+<!--            <td style="border: none;"></td>-->
+<!--            <td></td>-->
+<!--            <td></td>-->
+<!--            <td>TOTAL</td>-->
+<!--            <td>{{ billTotal | currency:'TZS':'Tsh '}}</td>-->
+<!--          </tr>-->
+<!--          </tbody>-->
+<!--        </table>-->
+<!--      </mat-card>-->
+
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+
+
+

@@ -1,9 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { CartModelServer } from 'src/app/model/cart.model';
-import { CartService } from 'src/app/services/cart.service';
-import { UserService } from 'src/app/services/user.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {FormBuilder} from '@angular/forms';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {CartModelServer} from 'src/app/model/cart.model';
+import {CartService} from 'src/app/services/cart.service';
+import {UserService} from 'src/app/services/user.service';
+import {AuthService} from '../../../services/auth.service';
+import {SharedService} from '../../../services/shared.service';
+import {MatDialog} from '@angular/material/dialog';
+import {PaymentFormComponent} from '../payment-form/payment-form.component';
+import {MatTableDataSource} from '@angular/material/table';
+import {loginModelResponse} from '../../../model/user.model';
+import {OrderService} from '../../../services/order.service';
+import {MatPaginator} from '@angular/material/paginator';
+import {BuyerOrdersModel, buyerOrdersResponse} from '../../../model/orders';
 
 @Component({
   selector: 'app-checkout',
@@ -12,74 +21,57 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class CheckoutComponent implements OnInit {
 
-  registrationForm: FormGroup;
-  // tslint:disable-next-line:max-line-length
-  private emailPattern = '(?:[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\\])';
-  //comparePassword: boolean;
+  billTotal = 0;
+  products;
+  orderNumber = 0;
+  showSpinner: boolean = false;
 
-  userID = 0;
-  cartData: CartModelServer;
-  cartTotal: number;
-  showSpinner: boolean;
- // checkoutForm: any;
+  userData: loginModelResponse;
+  orderDataSource: MatTableDataSource<BuyerOrdersModel>;
+  displayedColumns: string[] = ['OrderID', 'OrderDate', 'Status', 'Actions'];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private fb: FormBuilder,
-    private cartService: CartService,
+    public cartService: CartService,
     private spinner: NgxSpinnerService,
-    private userService: UserService
-  ) { 
+    private userService: UserService,
+    private authService: AuthService,
+    private sharedService: SharedService,
+    public dialog: MatDialog,
+    private orderService: OrderService
+  ) { }
 
-    // TODO: VALIDATE THE FIELD
-    this.registrationForm = fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(4)]],
-      lastName: ['', [Validators.required, Validators.minLength(4)]],
-      email: ['', [Validators.required, Validators.pattern(this.emailPattern)]],
-      region: ['', [Validators.required, Validators.minLength(4)]],
-      district: ['', [Validators.required, Validators.minLength(4)]],
-      phone: ['', [Validators.required, Validators.minLength(10)]],
-      username: ['', [Validators.required, Validators.minLength(6)]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+  ngOnInit() {
+    this.authService.userData$.subscribe(data => this.userData = data);
+    this.OrderMadeBelongToUser(this.userData.userId);
+  }
+
+  OrderMadeBelongToUser(userId) {
+    return this.orderService.getOrderMadeBelongToBuyer(userId)
+      .subscribe((prods: buyerOrdersResponse) => {
+        this.spinner.hide();
+        this.orderDataSource = new MatTableDataSource<BuyerOrdersModel>(prods.orders);
+        this.orderDataSource.paginator = this.paginator;
+      });
+  }
+
+  orderDetails(orderId) {
+    this.orderNumber = orderId;
+    this.orderService.getSingleOrder(orderId).then((prods:any) => {
+      this.products = prods.orders;
+      this.billTotal = prods.orderTotal;
     });
   }
 
-  get formControls() {
-    return this.registrationForm.controls;
+  onOpenPaymentDialog() {
+    const info = {
+      userId: this.userData.userId,
+      orderNumber: this.orderNumber,
+      amount: this.billTotal
+    };
+
+    const config = this.sharedService.stripeDialogConfiguration(info);
+    this.dialog.open(PaymentFormComponent, config);
   }
-
-  ngOnInit(){
-    this.cartService.cartData$.subscribe(data => this.cartData = data);
-    this.cartService.cartTotal$.subscribe(total => this.cartTotal = total);
-  }
-
-  onCheckout() {
-     this.spinner.show()
-    //   this.cartService.CheckoutFromCart(1);
-  }
-
-  registerUser() {
-    // if (this.registrationForm.invalid) {
-    //   return;
-    // }
-
-    // @ts-ignore
-    this.userService.registerUser({...this.registrationForm.value}).subscribe((response: any) => {
-
-      // SUCCESS: REGISTRATION SUCCESS
-      if (response.responseCode === 201){
-        this.userID = response.lastId;
-        // this.successRegisterMessage()
-      }
-
-      // ERROR : REGISTRATION FAIL
-      if(response.responseCode === 501){
-        this.userID = response.lastId;
-        // this.errorRegisterMessage()
-      }
-
-    });
-
-    this.registrationForm.reset();
-  }
-
 }

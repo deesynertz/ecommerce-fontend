@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { CartModelServer } from 'src/app/model/cart.model';
-import { CartService } from 'src/app/services/cart.service';
-import { SharedService } from 'src/app/services/shared.service';
-import { UserService } from 'src/app/services/user.service';
+import {Component, OnInit} from '@angular/core';
+import {CartModelServer} from 'src/app/model/cart.model';
+import {CartService} from 'src/app/services/cart.service';
+import {SharedService} from 'src/app/services/shared.service';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -17,13 +17,24 @@ export class HeaderComponent implements OnInit {
 
 
   constructor(public cartService: CartService,
-    public userService: UserService,
-    public sharedService: SharedService) { }
+              private authService: AuthService,
+              public sharedService: SharedService
+  ) {
+  }
 
   ngOnInit(): void {
-    this.cartService.cartTotal$.subscribe(total => {this.cartTotal = total;});
+    this.cartService.cartTotal$.subscribe(total => {
+      this.cartTotal = total;
+    });
     this.cartService.cartData$.subscribe(data => this.cartData = data);
-    this.userService.authState$.subscribe(authState => this.authState = authState);
+    this.authService.authState$.subscribe(authState => this.authState = authState);
+  }
+
+  logout() {
+    const ToasterMsg = 'You logged out';
+    const ToasterTitle = 'LOGOUT';
+    this.sharedService.infoToaster(ToasterMsg, ToasterTitle);
+    this.authService.logout();
   }
 
 }

@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { ProductModelServer, productServerResponse } from 'src/app/model/products.model';
-import { ProductsService } from 'src/app/services/products.service';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import {ProductModelServer, productServerResponse} from 'src/app/model/products.model';
+import {ProductsService} from 'src/app/services/products.service';
+import {AuthService} from '../../services/auth.service';
+import {OrderService} from '../../services/order.service';
 
 @Component({
   selector: 'app-order-view',
@@ -18,20 +20,21 @@ export class OrderViewComponent implements OnInit {
   orderDataSource: MatTableDataSource<ProductModelServer>;
   displayedColumns: string[] = ['Id', 'Title', 'qty', 'Price', 'CreatedOn', 'Status'];
 
-  userId = 2;
+  constructor(private productService: ProductsService,
+              private authService: AuthService,
+              private orderService: OrderService) {
+  }
 
-  constructor(private productService: ProductsService) { }
-
-  ngOnInit(): void {
-    this.OrderMadeBelongToUser(this.userId);
+  ngOnInit() {
+    this.authService.userData$.subscribe(data => {
+      this.OrderMadeBelongToUser(data.userId);
+    });
   }
 
   // FIND ALL PRODUCT BELONG TO USER
-  OrderMadeBelongToUser(userId: number): any{
-    return this.productService.getOrderMadeBelongToUser(userId)
+  OrderMadeBelongToUser(userId: number) {
+    return this.orderService.getOrderMadeBelongToSeller(userId)
       .subscribe((prods: productServerResponse) => {
-        // this.productList = prods.products;
-        console.log(prods.products);
         this.orderDataSource = new MatTableDataSource<ProductModelServer>(prods.products);
         this.orderDataSource.paginator = this.paginator;
       });
@@ -39,7 +42,7 @@ export class OrderViewComponent implements OnInit {
 
 
   onSearchClear() {
-    this.searchKey = "";
+    this.searchKey = '';
     this.applyFilter();
   }
 

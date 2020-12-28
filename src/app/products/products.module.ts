@@ -7,6 +7,7 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { CartComponent } from './components/cart/cart.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { AngularMaterialModule } from '../angular-material.module';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { AngularMaterialModule } from '../angular-material.module';
     CommonModule,
     ProductsRoutingModule,
     NgxPaginationModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    NgxSpinnerModule
   ],
   exports: [
     ProductComponent, ProductListComponent, CartComponent

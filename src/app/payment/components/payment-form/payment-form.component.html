@@ -1,0 +1,38 @@
+<ngx-spinner
+  bdColor="rgba(151,149,149,0.4)" size="large" color="orange"
+  type="ball-clip-rotate-pulse" fullScreen="true">
+  <p style="font-size: 20px; color: black">Paying Order...</p>
+</ngx-spinner>
+
+<mat-toolbar>
+  <span>{{"PAYMENT FORM"}}</span>
+  <span class="fill-remaining-space"></span>
+  <mat-icon color="warn" id="close-icon" (click)="onDialogClose()">close</mat-icon>
+</mat-toolbar>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="stripeTest" (ngSubmit)="createToken()" class="checkout">
+    <div class="form-row">
+      <div class="row">
+        <input type="text" class="form-control"
+               formControlName="name"
+               placeholder="Enter your name">
+      </div>
+      <div class="row card">
+        <ngx-stripe-card
+          [options]="cardOptions"
+          [elementsOptions]="elementsOptions">
+        </ngx-stripe-card>
+      </div>
+<!--      [disabled]="stripeTest.invalid && stripeTest.touched" -->
+      <div class="row card">
+        <div class="d-flex flex-column align-items-center justify-content-around">
+          <button type="submit" class="btn btn-sm btn-block">
+            PAY  {{ data.info.amount | currency : 'TZS' : 'Tsh '}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<!--novalidate (ngSubmit)="createToken()"-->

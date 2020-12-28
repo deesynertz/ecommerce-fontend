@@ -7,13 +7,11 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from './angular-material.module';
-import { FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ToastrModule } from 'ngx-toastr';
-import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from "angularx-social-login";
-import { AlertModule } from "ngx-alerts";
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
@@ -22,6 +20,15 @@ import { ProfileModule } from './profile/profile.module';
 import { ComfirmComponent } from './components/comfirm/comfirm.component';
 import { AddProductComponent } from './profile/add-product/add-product.component';
 import { DatePipe } from '@angular/common';
+import {EditProductComponent} from './profile/edit-product/edit-product.component';
+import {JWT_OPTIONS, JwtHelperService} from '@auth0/angular-jwt';
+import {AuthInterceptor} from './interceptors/auth.interceptor';
+
+import { StripeModule } from "stripe-angular"
+// Import the library
+import { NgxStripeModule } from 'ngx-stripe';
+import {PaymentFormComponent} from './payment/components/payment-form/payment-form.component';
+
 
 
 
@@ -43,36 +50,34 @@ import { DatePipe } from '@angular/common';
     NgxSpinnerModule,
     ToastrModule.forRoot(),
     ReactiveFormsModule,
-    SocialLoginModule,
-    AlertModule.forRoot({ maxMessages: 5, timeout: 5000, positionX: 'right' }),
-    
-
 
     AuthModule,
     PaymentModule,
     ProfileModule,
     ProductsModule,
-    SharedModule
+    SharedModule,
+
+    StripeModule.forRoot("pk_test_x4UJJBUXdYXomNNA5D5D8yci00BHo7cO4a"),
+    NgxStripeModule.forRoot('pk_test_x4UJJBUXdYXomNNA5D5D8yci00BHo7cO4a'),
+    // LibraryModule
   ],
   providers: [
+    JwtHelperService,
     {
-      provide: 'SocialAuthServiceConfig',
-      useValue: {
-        autoLogin: false,
-        providers: [
-          {
-            id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider(
-              '214867778007-pam55aedl7kki9ke9r5nspof1btpmjlr.apps.googleusercontent.com'
-            ),
-          },
-        ],
-      } as SocialAuthServiceConfig,
+      provide: JWT_OPTIONS,
+      useValue: JWT_OPTIONS
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
     },
     DatePipe,
   ],
   bootstrap: [AppComponent],
-  entryComponents: [AddProductComponent, ComfirmComponent
+  entryComponents: [
+    AddProductComponent, ComfirmComponent,
+    EditProductComponent, PaymentFormComponent
   ]
 })
 export class AppModule { }

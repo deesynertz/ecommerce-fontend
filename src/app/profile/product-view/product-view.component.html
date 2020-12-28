@@ -16,7 +16,7 @@
     <!-- /container -->
   </div>
   <!-- /BREADCRUMB -->
-  
+
   <!-- SECTION -->
   <div class="section">
     <!-- container -->
@@ -38,14 +38,14 @@
             </mat-form-field>
           </div>
           <ul class="store-grid">
-            <li class="active" title="Publish Product" mat-button (click)="openDialog()">
+            <li class="active" title="Publish Product" mat-button (click)="onCreateProduct()">
               <button mat-icon-button>
                 <mat-icon>library_add</mat-icon>
               </button>
             </li>
           </ul>
         </div>
-  
+
         <div class="mat-elevation-z8">
           <mat-table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="Id">
@@ -71,7 +71,7 @@
             <ng-container matColumnDef="Actions">
               <mat-header-cell *matHeaderCellDef></mat-header-cell>
               <mat-cell *matCellDef="let item">
-                <button mat-icon-button (click)="onEdit(item)">
+                <button mat-icon-button (click)="onEditProduct(item)">
                   <mat-icon>launch</mat-icon>
                 </button>
                 <button mat-icon-button color="warn" (click)="onDelete(item.id)">
@@ -98,11 +98,10 @@
           <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="5" showFirstLastButtons></mat-paginator>
         </div>
       </div>
-  
+
     </div>
   <!-- /row -->
   </div>
   <!-- /container -->
   </div>
   <!-- /SECTION -->
-  

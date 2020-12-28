@@ -1,13 +1,12 @@
+<mat-toolbar>
+  <span>{{"New Product"}}</span>
+  <span class="fill-remaining-space"></span>
+  <mat-icon color="warn" id="close-icon" (click)="onDialogClose()">close</mat-icon>
+</mat-toolbar>
+<mat-dialog-content class="mat-typography">
 
-  <mat-toolbar>
-    <span>{{value? "Modify Product":"New Product"}}</span>
-    <span class="fill-remaining-space"></span>
-    <mat-icon color="warn" id="close-icon" (click)="onClose()">close</mat-icon>
-    <!-- <button class="btn-dialog-close" mat-stroked-button (click)="onClose()" tabIndex="-1"><mat-icon>clear</mat-icon></button> -->
-  </mat-toolbar>
-  <mat-dialog-content class="mat-typography">
-    <!-- <img [src]="imageUrl"> -->
-  <form [formGroup]="productform" class="normal-form-product" autocomplete="off" (submit)="postProduct()" enctype="multipart/form-data">
+  <form [formGroup]="sharedService.productForm" class="normal-form-product"
+        autocomplete="off" (submit)="sharedService.postProduct(userId)" enctype="multipart/form-data">
     <mat-grid-list cols="2" rowHeight="300px">
       <mat-grid-tile>
         <div class="controles-container">
@@ -18,24 +17,16 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Discription</mat-label>
+            <mat-label>Description</mat-label>
             <textarea matInput formControlName="description" placeholder="Anything about product..."></textarea>
           </mat-form-field>
 
-          
           <mat-label>Image *</mat-label>
-          <input type="file" formControlName="prodImage" multiple="multiple" accept="" 
-          (change)="onFileSelected($event)"><br>
-
-          <!-- <mat-form-field>
-            <mat-label>Image *</mat-label>
-            <input matInput type="file" accept="image/*" formControlName="image">
-            <mat-error>This field is mandatory.</mat-error>
-          </mat-form-field> -->
+          <input type="file" name="imageUrl" (change)="sharedService.onFileSelect($event)"><br>
 
           <mat-form-field>
             <mat-select formControlName="category" placeholder="Select Product Category">
-              <ng-container *ngFor="let category of categoriesList">
+              <ng-container *ngFor="let category of sharedService.categoriesList">
                 <mat-option [value]="category.categoryId">{{category.name}}</mat-option>
               </ng-container>
             </mat-select>
@@ -46,7 +37,9 @@
       <mat-grid-tile>
         <div class="controles-container">
           <mat-form-field>
-            <input matInput formControlName="lifeTime" [matDatepicker]="picker" [min]="minDate" placeholder="Expired Date (yyyy/MM/dd)">
+            <mat-label>Expired Date</mat-label>
+            <input matInput formControlName="lifeTime" [matDatepicker]="picker" [min]="sharedService.minDate"
+                   placeholder="(yyyy/mm/dd)">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             <mat-error>This field is mandatory.</mat-error>
@@ -74,8 +67,11 @@
       </mat-grid-tile>
     </mat-grid-list>
     <div class="button-row">
-      <button mat-raised-button color="primary" [disabled]="productform.invalid" class="pull-right" type="submit" [disabled]="">Submit</button>
-      <button mat-raised-button color="warn" (click)="null">Clear</button>
+      <button mat-raised-button color="primary"
+              [disabled]="sharedService.productForm.invalid"
+              class="pull-right" type="submit">Submit
+      </button>
+      <button mat-raised-button color="warn" (click)="sharedService.onClearForm()">Clear</button>
     </div>
   </form>
 </mat-dialog-content>

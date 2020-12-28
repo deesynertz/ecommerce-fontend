@@ -11,8 +11,8 @@
       <ul class="header-links pull-right">
         <li *ngIf="!authState"><a [routerLink]="['register']" routerLinkActive="active"><i class="fa fa-user-plus"></i> Register</a></li>
         <li *ngIf="authState"><a [routerLink]="['profile']" routerLinkActive="active"><i class="fa fa-user-o"></i> My Account</a></li>
-        <li *ngIf="!authState"><a [routerLink]="['login']" routerLinkActive="active"><i class="fa fa-sign-in"></i> LOGIN</a></li>
-        <li *ngIf="authState"><a (click)="sharedService.logout()"><i class="fa fa-sign-out"></i> logout</a></li>
+        <li *ngIf="!authState"><a [routerLink]="['login']" routerLinkActive="active"><i class="fa fa-sign-in-alt"></i> LOGIN</a></li>
+        <li *ngIf="authState"><a (click)="logout()"><i class="fa fa-sign-out"></i> logout</a></li>
       </ul>
     </div>
   </div>
@@ -77,24 +77,25 @@
                 <div class="cart-list" *ngIf="cartData.data[0].numInCart !== 0">
                   <div class="product-widget" *ngFor="let item of cartData.data; let i=index">
                     <div class="product-img">
-                      <img [src]="item.product?.image" alt="{{item.product.title}}" width="20px">
+                      <img [src]="item.product?.image" alt="{{item.product.title}}" width="20px"> <!--item.product?.price -->
                     </div>
+
                     <div class="product-body">
                       <h3 class="product-name"><a (click)="sharedService.selectProduct(item.product.id)">{{item.product.title}}</a></h3>
-                      <h4 class="product-price"><span class="qty">{{item.numInCart}} x </span>{{item.product?.price | currency:'TZS':'Tsh '}}</h4>
+                      <h4 class="product-price"><span class="qty">{{item.numInCart}} x </span>{{cartService.handleDiscount(item.product?.price, item.product?.discount) | currency:'TZS':'Tsh '}}</h4>
                     </div>
                     <button class="delete" (click)="cartService.DeleteProductFromCart(i)"><i class="fa fa-close"></i></button>
                   </div>
                 </div>
 
                 <div class="cart-summary">
-                  <small> 0 Item(s) selected</small>
-                  <h5>TOTAL : {{ 0 | currency:'TZS':'Tsh '}}</h5>
+                  <small> {{cartData.data[0].numInCart !== 0 ? cartData.data.length : 0}} Item(s) selected</small>
+                  <h5>TOTAL : {{ cartTotal | currency:'TZS':'Tsh '}}</h5>
                 </div>
 
                 <div class="cart-btns">
-                  <a [routerLink]="['/cart']" routerLinkActive="active">View Cart</a>
-                  <a [routerLink]="['/checkout']" routerLinkActive="active">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+                  <a [routerLink]="['cart']" routerLinkActive="active">View Cart</a>
+                  <a [routerLink]="['checkout']" routerLinkActive="active">Checkout <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
               </div>
             </div>

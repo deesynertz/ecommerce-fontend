@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductModelServer, productServerResponse } from 'src/app/model/products.model';
 import { CartService } from 'src/app/services/cart.service';
 import { ProductsService } from 'src/app/services/products.service';
-import { SharedService } from 'src/app/services/shared.service';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import {Observable} from 'rxjs';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-product-list',
@@ -12,23 +15,30 @@ import { SharedService } from 'src/app/services/shared.service';
 })
 export class ProductListComponent implements OnInit {
 
-  productsList: ProductModelServer[] = []
+  // productsList: ProductModelServer[] = []
   discount = 0;
-  page: number = 1;
+  obs: Observable<any>
+  dataSource: MatTableDataSource<ProductModelServer>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private productsService: ProductsService,
-    public sheredService: SharedService,
-    private cartService: CartService,
-    private router: Router,
+    public cartService: CartService,
+    private router: Router
   ) { }
 
   ngOnInit() {
-    this.productsService.getAllProducts(8).subscribe((prods: productServerResponse) => {
-      this.productsList = prods.products;
-    });
+    this.showAppProductsToStorePage();
   }
 
+  showAppProductsToStorePage(){
+    // TODO: 1: remove pagination, retrieve data by pages to avoid big road in the site
+    return this.productsService.getAllProducts().subscribe((prods: productServerResponse) => {
+      this.dataSource = new MatTableDataSource<ProductModelServer>(prods.products);
+      this.dataSource.paginator = this.paginator;
+      this.obs = this.dataSource.connect();
+    });
+  }
 
   selectProduct(id: number) {
     this.router.navigate(['/product', id]).then();

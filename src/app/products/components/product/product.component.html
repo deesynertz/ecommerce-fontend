@@ -6,9 +6,9 @@
       <div class="row">
         <div class="col-md-12">
           <ul class="breadcrumb-tree">
-            <li><a routerLink="/products">All Categories</a></li>
+            <li><a [routerLink]="['/product-list']">All Categories</a></li>
             <li class="active">{{ product?.category }}</li>
-            <li class="active">{{ product.title }}</li>
+            <li class="active">{{ product?.title }}</li>
           </ul>
         </div>
       </div>
@@ -17,7 +17,7 @@
     <!-- /container -->
   </div>
   <!-- /BREADCRUMB -->
-  
+
   <!-- SECTION -->
   <div class="section">
     <!-- container -->
@@ -28,7 +28,7 @@
         <div class="col-md-3">
           <div id="product-main-img">
             <div class="product-preview">
-              <img [src]="product.image" alt="">
+              <img [src]="product?.image" alt="">
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
         <!-- Product details -->
         <div class="col-md-4">
           <div class="product-details">
-            <h2 class="product-name">{{ product.title }}</h2>
+            <h2 class="product-name">{{ product?.title }}</h2>
             <div>
               <div class="product-rating">
                 <i class="fa fa-star"></i>
@@ -48,13 +48,13 @@
               <a class="review-link" href="#">10 Review(s) | Add your review</a>
             </div>
             <div>
-              <h3 class="product-price" *ngIf="product.discount === 0">
-                {{product?.price |currency :'TZS':'TSh '}}
+              <h3 class="product-price" *ngIf="product?.discount === 0">
+                {{ cartService.handleDiscount(product?.price,product?.discount) |currency :'TZS':'TSh '}}
               </h3>
-              <h3 class="product-price" *ngIf="product.discount > 0">
-                {{ discount | currency: 'TZS': 'TSh '}}
+              <h3 class="product-price" *ngIf="product?.discount > 0">
+                {{ cartService.handleDiscount(product?.price,product?.discount) | currency: 'TZS': 'TSh '}}
                 <del class="product-old-price">
-                  {{product?.price |currency :'TZS':'TSh '}}
+                  {{ product?.price |currency :'TZS':'TSh '}}
                 </del>
               </h3>
             </div>
@@ -69,20 +69,24 @@
                   <span (click)="Decrease()" class="qty-down">-</span>
                 </div>
               </div>
-              <button class="primary-btn" [class.disabled]="product.quantity < 1"
-                      [class.warning-btn]="product.quantity < 1"
-                      (click)="addToCart(product?.id)" [disabled]="product.quantity < 1">
-                {{ product.quantity < 1 ? "NO STOCK" : "Add To Cart"}}
+              <button class="primary-btn" [class.disabled]="product?.quantity < 1"
+                      [class.warning-btn]="product?.quantity < 1"
+                      (click)="addToCart(product?.id)" [disabled]="product?.quantity < 1">
+                {{ product?.quantity < 1 ? "NO STOCK" : "Add To Cart"}}
               </button>
             </div>
             <ul class="product-links">
               <li>Category:</li>
-              <li><a >{{ product?.categoryName }}</a></li>
+              <li><a >{{ product?.category }}</a></li>
+            </ul>
+            <ul class="product-links">
+<!--              <mat-icon>location_on</mat-icon>-->
+              <li> <i class="fa fa-map-marker"></i> <a> {{ product?.district }}, {{ product?.region }}</a></li>
             </ul>
           </div>
         </div>
         <!-- /Product details -->
-  
+
         <!-- Product tab -->
         <div class="col-md-12">
           <div id="product-tab">
@@ -101,7 +105,7 @@
     <!-- /container -->
   </div>
   <!-- /SECTION -->
-  
+
   <!-- Section -->
   <div class="section" *ngIf="this.productsList.length > 1">
     <!-- container -->
@@ -112,9 +116,9 @@
         <div class="col-md-3 col-sm-6" *ngFor="let relate of this.productsList">
           <div class="product">
             <div class="product-img" style="height: 200px;">
-              <img [src]="relate.image" (click)="selectProduct(relate.id)" alt="{{relate.title}}">
+              <img [src]="relate?.image" (click)="selectProduct(relate?.id)" alt="{{relate?.title}}">
               <div class="product-label">
-                <span class="sale" *ngIf="relate.discount > 0">-{{relate.discount}}%</span>
+                <span class="sale" *ngIf="relate?.discount > 0">-{{relate?.discount}}%</span>
                 <!-- <span class="new">NEW</span>-->
               </div>
             </div>
@@ -145,5 +149,4 @@
     <!-- /container -->
   </div>
   <!-- /Section -->
-  
-  
+

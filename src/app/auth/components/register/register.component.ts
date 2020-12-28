@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { RolesResponseModel } from 'src/app/model/user.model';
 import { SharedService } from 'src/app/services/shared.service';
 import { UserService } from 'src/app/services/user.service';
+import {AuthService} from '../../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +17,7 @@ export class RegisterComponent implements OnInit {
   roleList: RolesResponseModel[] = [];
 
   constructor(
+    private authService: AuthService,
     private userService: UserService,
     private router: Router,
     private sharedService: SharedService
@@ -33,17 +35,17 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.userService.registerUser({...registrationForm.value})
+    this.authService.registerUser({...registrationForm.value})
       .subscribe((response: any) => {
-        if (response.success) {
-          
+        if (response.success == 1) {
+
           this.sharedService.successToaster(response.message, 'Registration');
           this.router.navigateByUrl('/login').then();
-          
+
         } else {
-          
+
           this.sharedService.errorToaster(response.message, 'Registration');
-          
+
         }
       });
 

@@ -1,7 +1,8 @@
+<!--TODO: REMOVE THIS SPINNER-->
 <ngx-spinner
-  bdColor= "rgba(151,149,149,0.4)" size="large" color="orange"
+  bdColor="rgba(151,149,149,0.4)" size="large" color="orange"
   type="ball-clip-rotate-pulse" fullScreen="true">
-  <p style="font-size: 20px; color: black">Booking Order...</p>
+  <p style="font-size: 20px; color: black">Paying Order...</p>
 </ngx-spinner>
 
 <!-- SECTION -->
@@ -16,110 +17,92 @@
         </div>
       </div>
 
-      <div class="col-md-12">
-        <div *ngIf="cartData.total <= 0" class="col-md-12">
-          <div class="text-center my-5">
-            <div class="alert alert-warning">
-              <h4>Your Cart Is Empty</h4>
-            </div>
-            <button class="primary-btn btn-lg mt-3" routerLink="/products">GO TO SHOP</button>
-          </div>
-        </div>
-      </div>
-
 
       <div class="col-md-12">
         <div class="row">
-          <div class="col-md-7" *ngIf="cartData.total >= 0;">
+          <div class="col-md-7">
             <!-- Billing Details -->
+<!--            <div class="billing-details">-->
+<!--              <div class="section-title">-->
+<!--                <h3 class="title">Billing address-->
+<!--                  <span class="text-danger">*</span></h3>-->
+<!--              </div>-->
+
+<!--            </div>&lt;!&ndash; /Billing Details &ndash;&gt;-->
+
             <div class="billing-details">
-              <div class="section-title">
-                <h3 class="title">Billing address
-                  <span class="text-danger">*</span></h3>
-              </div>
-              <div class="input-radio">
-              <input type="radio" name="payment" id="payment-2">
-              <label for="payment-2">
-                <span></span>Already have Account
-              </label>
-              <div class="caption">
-                <p>Account Id: {{userID? userID : null}}</p>
+              <div class="mat-elevation-z8">
+                <mat-table [dataSource]="orderDataSource">
+                  <ng-container matColumnDef="OrderID">
+                    <mat-header-cell *matHeaderCellDef>Order ID</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{order.id}}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="OrderDate">
+                    <mat-header-cell *matHeaderCellDef>Ordered At</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{order?.orderDate | date }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="Status">
+                    <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let order"
+                              [ngClass]="{'text-success':!(order.status==0), 'text-danger':!(order.status==1)}">
+                      {{order.status == 0? 'Pending' : 'Paid' }}</mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="Actions">
+                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                      <button [disabled]="order.status == 1"
+                              mat-icon-button color="primary" (click)="orderDetails(order.id)">
+<!--                        <mat-icon>remove_red_eye</mat-icon>-->
+                        <i class="fa fa-eye"></i>
+                      </button>
+                      <button [disabled]="order.status == 1"
+                              mat-icon-button color="warn" (click)="null">
+<!--                        <mat-icon>delete_outline</mat-icon>-->
+                        <i class="fa fa-trash-alt"></i>
+                      </button>
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="loading">
+                    <mat-footer-cell *matFooterCellDef colspan="2">
+                      Loading data...
+                    </mat-footer-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="noData">
+                    <mat-footer-cell *matFooterCellDef colspan="2">
+                      No order placed yet
+                    </mat-footer-cell>
+                  </ng-container>
+                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                  <mat-footer-row *matFooterRowDef="['loading']"
+                                  [ngClass]="{'hide':orderDataSource!=null}"></mat-footer-row>
+                  <mat-footer-row *matFooterRowDef="['noData']"
+                                  [ngClass]="{'hide':!(orderDataSource!=null && orderDataSource.data.length==0)}"></mat-footer-row>
+                </mat-table>
+                <mat-paginator
+                  [pageSizeOptions]="[5, 10, 25, 50]"
+                  [pageSize]="5"
+                  showFirstLastButtons>
+                </mat-paginator>
               </div>
             </div>
-              <div class="input-radio">
-                <input type="radio" name="payment" id="payment-1">
-                <label for="payment-1">
-                  <span></span>I dont Have anny
-                </label>
-                <div class="caption">
-
-                  <!-- <form (ngSubmit)="registerUser()" [formGroup]="registrationForm">
-                    <div class="form-group">
-                      <input class="input" autocomplete="off" type="text" formControlName="firstName" id="firstName" name="firstName" placeholder="First Name">
-                      <div class="form-control-feedback">
-
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <input class="input"  autocomplete="off" type="text" formControlName="lastName" id="lastName" name="lastName" placeholder="Last Name">
-                      <div class="form-control-feedback">
-
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <input class="input" autocomplete="off" type="email" formControlName="email" id="email" name="email" placeholder="Email">
-                      <div class="form-control-feedback">
-
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <input class="input"  autocomplete="off" type="text" formControlName="region" id="region" name="region" placeholder="Region">
-                      <div class="form-control-feedback">
-
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <input class="input"  autocomplete="off" type="text" formControlName="district" id="district" name="district" placeholder="District">
-                      <div class="form-control-feedback">
-
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <input class="input" autocomplete="off" type="tel" formControlName="phone" id="phone" name="phone" placeholder="Telephone">
-                      <div class="form-control-feedback">
-
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="input-checkbox">
-                        <input type="checkbox" id="create-account">
-                        <label for="create-account"><span></span>Done</label>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <button class="primary-btn order-submit float-right" type="submit">Create Acount
-                      </button>
-                    </div>
-                  </form> -->
-                </div>
-              </div>
-            </div><!-- /Billing Details -->
           </div>
 
           <!-- Order Details -->
-          <div class="col-md-5 order-details" *ngIf="cartData.total >= 0;">
+          <div class="col-md-5 order-details">
             <div class="section-title text-center">
-              <h3 class="title">Your Order</h3>
+              <h3 class="title">Order summary</h3>
             </div>
             <div class="order-summary">
+              <h6 *ngIf="orderNumber > 0">Order No: {{orderNumber}}</h6>
               <div class="order-col">
                 <div><strong>PRODUCT</strong></div>
                 <div><strong>SUB-TOTAL</strong></div>
               </div>
               <div class="order-products">
-                <div class="order-col small" *ngFor="let item of cartData.data">
-                  <div>{{item.numInCart}} x {{item.product.title}}</div>
-                  <div>{{(item.product.price * item.numInCart) | currency:'TZS': 'Tsh '}}</div>
+                <div class="order-col small" *ngFor="let item of products">
+                  <div>{{item.quantity}} x {{item.title}}</div>
+                  <div>{{(cartService.handleDiscount(item?.price, item.discount) * item.quantity) | currency:'TZS': ' '}}</div>
                 </div>
               </div>
               <div class="order-col">
@@ -128,21 +111,15 @@
               </div>
               <div class="order-col">
                 <div><strong>TOTAL</strong></div>
-                <div><strong class="order-total small">{{cartTotal | currency:'TZS': 'Tsh '}}</strong></div>
+                <div><strong class="order-total small">{{ billTotal | currency:'TZS': 'Tsh '}}</strong></div>
               </div>
             </div>
-            <div class="input-checkbox">
-              <input type="checkbox" id="terms">
-              <label for="terms">
-                <span></span>
-                I've read and accept the <a href="#">terms & conditions</a>
-              </label>
-            </div>
-            <button type="submit" class="primary-btn order-submit my-2 btn-block"
-                    [disabled]="cartTotal <= 0"
-                    [class.disabled]="cartTotal <= 0"
-                    (click)="userID > 0 ? onCheckout(): null">
-              Place order</button>
+            <button type="submit"
+                    [disabled]="billTotal <= 0"
+                    class="primary-btn order-submit my-2 btn-block"
+                    (click)="onOpenPaymentDialog()">
+              Place order
+            </button>
           </div>
           <!-- /Order Details -->
         </div>

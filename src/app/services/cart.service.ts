@@ -1,16 +1,18 @@
-import { Injectable } from '@angular/core';
-import { ProductModelServer } from '../model/products.model';
-import { NgxSpinnerService } from "ngx-spinner";
-import { ToastrService } from "ngx-toastr";
-import { BehaviorSubject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { NavigationExtras, Router } from '@angular/router';
-import { ProductsService } from './products.service';
-import { OrderService } from './order.service';
-import { CartModelPublic, CartModelServer } from '../model/cart.model';
-import { newOrderUrl, paymentOrderUrl } from '../config/api';
-import { SharedService } from './shared.service';
+import {Injectable} from '@angular/core';
+import {ProductModelServer} from '../model/products.model';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {ToastrService} from 'ngx-toastr';
+import {BehaviorSubject} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {Router} from '@angular/router';
+import {ProductsService} from './products.service';
+import {OrderService} from './order.service';
+import {CartModelPublic, CartModelServer} from '../model/cart.model';
+import {orderNewUrl} from '../config/api';
+import {SharedService} from './shared.service';
 
+
+export const CART_NAME = 'cart';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +26,7 @@ export class CartService {
       incart: 0,
       id: 0
     }]
-  }
+  };
 
   // Data variable to store the cart information on the server
   private cartDataServer: CartModelServer = {
@@ -50,11 +52,10 @@ export class CartService {
   ) {
 
     this.cartTotal$.next(this.cartDataServer.total);
-
     this.cartData$.next(this.cartDataServer);
 
     // get the information from local storage if any
-    let info: CartModelPublic = JSON.parse(localStorage.getItem('cart'));
+    let info: CartModelPublic = JSON.parse(localStorage.getItem(CART_NAME));
 
     if (info !== null && info !== undefined && info.prodData[0].incart !== 0) {
       /* assign the value to our data variable which corresponds to the LocalStorage
@@ -71,7 +72,7 @@ export class CartService {
             this.cartDataServer.data[0].product = actualProdInfo;
             this.CalculateTotal();
             this.cartDataClient.total = this.cartDataServer.total;
-            localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+            localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
 
           } else {
             // cartDataServer already have some data.
@@ -82,7 +83,7 @@ export class CartService {
 
             this.CalculateTotal();
             this.cartDataClient.total = this.cartDataServer.total;
-            localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+            localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
           }
 
           this.cartData$.next({...this.cartDataServer});
@@ -102,7 +103,7 @@ export class CartService {
         this.cartDataClient.prodData[0].incart = this.cartDataServer.data[0].numInCart;
         this.cartDataClient.prodData[0].id = prod.id;
         this.cartDataClient.total = this.cartDataServer.total;
-        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+        localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
         this.sharedService.successToaster(prod.title, 'Product Added');
       }
       // 2: Cart is not empty
@@ -139,8 +140,8 @@ export class CartService {
 
         this.CalculateTotal();
         this.cartDataClient.total = this.cartDataServer.total;
-        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
-        this.cartData$.next({ ...this.cartDataServer });
+        localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
+        this.cartData$.next({...this.cartDataServer});
       }
     });
   }
@@ -153,65 +154,64 @@ export class CartService {
       this.CalculateTotal();
       this.cartDataClient.total = this.cartDataServer.total;
       this.cartData$.next({...this.cartDataServer});
-      localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+      localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
 
     } else {
       data.numInCart--;
 
       if (data.numInCart < 1) {
         this.DeleteProductFromCart(index);
-        this.cartData$.next({ ...this.cartDataServer });
+        this.cartData$.next({...this.cartDataServer});
 
       } else {
         this.cartData$.next({...this.cartDataServer});
         this.cartDataClient.prodData[index].incart = data.numInCart;
         this.CalculateTotal();
         this.cartDataClient.total = this.cartDataServer.total;
-        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+        localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
       }
     }
   }
 
   DeleteProductFromCart(index) {
-    /* console.log(this.cartDataClient.prodData[index].prodId);
-      console.log(this.cartDataServer.data[index].product.id); */
+    // TODO: USER MAT DIALOG
+    this.sharedService.openConfirmDialog('Are you sure you want to delete the item ?')
+      .afterClosed().subscribe(res => {
+      if (res) {
+        this.cartDataServer.data.splice(index, 1);
+        this.cartDataClient.prodData.splice(index, 1);
+        this.CalculateTotal();
+        this.cartDataClient.total = this.cartDataServer.total;
 
-    if (window.confirm('Are you sure you want to delete the item ?')) {
-      this.cartDataServer.data.splice(index, 1);
-      this.cartDataClient.prodData.splice(index, 1);
-      this.CalculateTotal();
-      this.cartDataClient.total = this.cartDataServer.total;
+        if (this.cartDataClient.total === 0) {
+          this.cartDataClient = {prodData: [{incart: 0, id: 0}], total: 0};
+          localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
+        } else {
+          localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
+        }
 
-      if (this.cartDataClient.total === 0) {
-        this.cartDataClient = {prodData: [{incart: 0, id: 0}], total: 0};
-        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
-      } else {
-        localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
+        if (this.cartDataServer.total === 0) {
+          this.cartDataServer = {
+            data: [{
+              product: undefined,
+              numInCart: 0
+            }],
+            total: 0
+          };
+          this.cartData$.next({...this.cartDataServer});
+        } else {
+          this.cartData$.next({...this.cartDataServer});
+        }
+
+
       }
-
-      if (this.cartDataServer.total === 0) {
-        this.cartDataServer = {
-          data: [{
-            product: undefined,
-            numInCart: 0
-          }],
-          total: 0
-        };
-        this.cartData$.next({...this.cartDataServer});
-      } else {
-        this.cartData$.next({...this.cartDataServer});
-      }
-    }
-    // If the user doesn't want to delete the product, hits the CANCEL button
-    else {
-      return;
-    }
+    });
   }
 
   CalculateSubTotal(index): number {
     let subTotal = 0;
     let p = this.cartDataServer.data[index];
-    subTotal = p.product.price * p.numInCart;
+    subTotal = p.numInCart * this.handleDiscount(p.product.price, p.product.discount);
     return subTotal;
   }
 
@@ -221,11 +221,18 @@ export class CartService {
     this.cartDataServer.data.forEach(p => {
       const {numInCart} = p;
       const {price} = p.product;
-      Total += numInCart * price;
+      const {discount} = p.product
+      Total += numInCart * this.handleDiscount(price, discount);
     });
 
     this.cartDataServer.total = Total;
     this.cartTotal$.next(this.cartDataServer.total);
+  }
+
+  handleDiscount(price, discount){
+    let actualPrice = 0;
+    actualPrice = discount != 0 ?  (price - (price * (discount / 100))) : price
+    return actualPrice;
   }
 
   private resetServerData() {
@@ -239,52 +246,55 @@ export class CartService {
     this.cartData$.next({...this.cartDataServer});
   }
 
-  CheckoutFromCart(userId: number) {
-    this.http.post(paymentOrderUrl, null).subscribe((res: { success: boolean }) => {
-      console.clear();
-
-      if (res.success) {
-        this.resetServerData();
-        this.http.post(newOrderUrl, {
-          customerId: userId,
-          products: this.cartDataClient.prodData
-        }).subscribe((data: OrderConfirmationResponse) => {
-
-          this.orderService.getSingleOrder(data.order_id).then(prods => {
-            if (data.success) {
-              const navigationExtras: NavigationExtras = {
-                state: {
-                  message: data.message,
-                  products: prods,
-                  orderId: data.order_id,
-                  total: this.cartDataClient.total
-                }
-              };
-              this.spinner.hide();
-              this.router.navigate(['/confirmation'], navigationExtras).then(p => {
-                this.cartDataClient = {prodData: [{incart: 0, id: 0}], total: 0};
-                this.cartTotal$.next(0);
-                localStorage.setItem('cart', JSON.stringify(this.cartDataClient));
-              });
-            }
-          });
-        })
-      } else {
-        this.spinner.hide();
-        this.router.navigateByUrl('/checkout').then();
-        this.sharedService.errorToaster('Sorry, failed to book the order', "Order Status");
-      }
-    })
+  PlaceNewOrder(userId: number) {
+    // console.clear();
+    this.resetServerData();
+    this.http.post(`${orderNewUrl}`, {customerId: userId, totalAmount:this.cartDataClient.total , products: this.cartDataClient.prodData})
+      .subscribe((data: any) => {
+        this.sharedService.successToaster(`${data.message}`, 'ORDER MSG');
+        this.cartDataClient = {prodData: [{incart: 0, id: 0}], total: 0};
+        this.cartTotal$.next(0);
+        localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
+        this.router.navigate(['/checkout']).then();
+      });
   }
-}
 
-interface OrderConfirmationResponse {
-  order_id: number;
-  success: boolean;
-  message: string;
-  products: [{
-    id: number,
-    numInCart: number
-  }]
+  // handle product with discount
+
+  // CheckoutFromCart(userId: number, token: string, amount: number) {
+  //   const paymentData = {userId, token, amount};
+  //   this.http.post(paymentOrderUrl, {paymentData}).subscribe((res: { success: boolean }) => {
+  //     console.clear();
+  //
+  //     if (res.success) {
+  //       this.resetServerData();
+  //       this.http.post(newOrderUrl, {customerId: userId, products: this.cartDataClient.prodData})
+  //         .subscribe((data: OrderConfirmationResponse) => {
+  //
+  //           this.orderService.getSingleOrder(data.order_id).then(prods => {
+  //             if (data.success) {
+  //               const navigationExtras: NavigationExtras = {
+  //                 state: {
+  //                   message: data.message, products: prods, orderId: data.order_id,
+  //                   total: this.cartDataClient.total
+  //                 }
+  //               };
+  //               this.spinner.hide();
+  //               this.router.navigate(['/confirmation'], navigationExtras)
+  //                 .then(p => {
+  //                   this.cartDataClient = {prodData: [{incart: 0, id: 0}], total: 0};
+  //                   this.cartTotal$.next(0);
+  //                   localStorage.setItem(CART_NAME, JSON.stringify(this.cartDataClient));
+  //                 });
+  //             }
+  //           });
+  //         });
+  //     } else {
+  //       this.spinner.hide();
+  //       this.router.navigateByUrl('/checkout').then();
+  //       this.sharedService.errorToaster('Sorry, failed to book the order', 'Order Status');
+  //     }
+  //   });
+  // }
 }
 

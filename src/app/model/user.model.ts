@@ -1,6 +1,41 @@
+export interface userProfileModel {
+    userId: number,
+    firstName: string,
+    lastName: string,
+    region: string,
+    district: string,
+    phone: number,
+    email: string,
+    username: string,
+    roleName: string
+
+}
+
+export interface userProfileResponse {
+  user: userProfileModel[]
+}
+
+
+
+
+
+
 export interface UserRegistrationResponse {
   lastId: number;
   responseCode: number;
+}
+
+export interface loginModelResponse {
+  auth: string;
+  userId: number;
+  role: number,
+  username: string;
+}
+
+export interface loginResponse {
+  message: string;
+  token: string;
+  userData: loginModelResponse[];
 }
 
 
@@ -23,7 +58,8 @@ export interface RolesResponseModel {
   roleName: string,
   createdOn: string,
 }
-export interface RolesExportModel{
+
+export interface RolesExportModel {
   count: number;
   roles: RolesResponseModel[];
 }

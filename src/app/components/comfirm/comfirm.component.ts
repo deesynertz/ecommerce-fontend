@@ -11,9 +11,7 @@ export class ComfirmComponent implements OnInit {
   constructor(@Inject(MAT_DIALOG_DATA) public data,
   public dialogRef: MatDialogRef<ComfirmComponent>) { }
 
-  ngOnInit(): void {
-    
-  }
+  ngOnInit(): void {}
 
   closeDialog() {
     this.dialogRef.close(false);

@@ -1,7 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { addNewProduct, allOrderByUserIdUrl, allPaymentByUserIdUrl, categoriesUrl, productByCategoryUrl, productByIdUrl, productByUserUrl, productImageUrl, productUrl } from '../config/api';
+import {
+  categoriesUrl, productAddNewUrl,
+  productByCategoryUrl,
+  productByIdUrl,
+  productImageUrl, productRemoveUrl, productsUrl,
+} from '../config/api';
 import { categoryServerResponse } from '../model/category.mode';
 import { ProductModelServer, productServerResponse } from '../model/products.model';
 import { DatePipe } from '@angular/common';
@@ -11,16 +16,18 @@ import { DatePipe } from '@angular/common';
 })
 export class ProductsService {
 
-  constructor(private http: HttpClient, private mypecker: DatePipe) { }
+  constructor(private http: HttpClient, private myPiker: DatePipe) { }
 
-  
-  getAllProducts(numberOfResult: number): Observable<productServerResponse> {
-    return this.http.get<productServerResponse>(productUrl, {
+  getAllProducts(numberOfResult?: number): Observable<productServerResponse> {
+    return this.http.get<productServerResponse>(`${productsUrl}`);
+  }
+  /*
+  * {
       params: {
         limit: numberOfResult.toString()
       }
-    });
-  }
+    }
+  * */
 
   getImageFromBackend(prodImage: string): Observable<string>{
     return this.http.get<string>(productImageUrl + prodImage);
@@ -37,51 +44,37 @@ export class ProductsService {
 
   getAllCategory(): Observable<categoryServerResponse>{
     return this.http.get<categoryServerResponse>(categoriesUrl);
-  };
+  }
 
-  getDiscount(price: number, discount: number){
+  getDiscount(price: number, discount: number): any{
     if (discount > 0){
-      return price - (price * (discount/100));
+      return price - (price * (discount / 100));
     }
   }
 
-
-  getProductRespectToUser(userId: number): Observable<productServerResponse> {
-    return this.http.get<productServerResponse>(productByUserUrl + userId);
+  postImage(photoUrl): Observable<any> {
+    return this.http.post<any>(productImageUrl, photoUrl);
   }
-
-  getOrderMadeBelongToUser(userId: number): Observable<productServerResponse> {
-    return this.http.get<productServerResponse>(allOrderByUserIdUrl + userId);
-  }
-
-
-  getOrderAndPaymentBelongToUser(userId: number): Observable<productServerResponse> {
-    return this.http.get<productServerResponse>(allPaymentByUserIdUrl);
-  }
-
 
   // INSERT PRODUCT
-  postProduct(productFormData: any, photoUrl): Observable<any> {
+  postProduct(formData: any, photoUrl?: any, userRole?: number): Observable<any> {
+    const productName = formData.productName;
+    const price = formData.price;
+    const lifeTime = this.myPiker.transform(formData.lifeTime, 'yyyy-MM-dd');
+    const quantity = formData.quantity;
+    const image = photoUrl;
+    const description = formData.description;
+    const category = formData.category;
+    const owner = userRole; // TODO: take care of owner
+    const discount = formData.discount;
 
-    const productName = productFormData.productName;
-    const price = productFormData.price;
-    const lifeTime = this.mypecker.transform(productFormData.lifeTime, 'yyyy-MM-dd')
-    const quantity = productFormData.quantity;
-    const image = ""; // TODO: take care of image
-    const description = productFormData.description;
-    const category = productFormData.category;
-    const owner = 2; // TODO: take care of owner
-    const discount = productFormData.discount;
-
-    console.log(photoUrl);
-
-    return this.http.post(productImageUrl, photoUrl);
-
-    // return this.http.post<any>(addNewProduct, {
-    //   productName,price,lifeTime,quantity,image,description,category,owner,discount
-    // });
+    return this.http.post(`${productAddNewUrl}`, {
+      productName,price,lifeTime,quantity,image,description,category,owner,discount
+    });
   }
-  
 
-
+  // REMOVE PRODUCT
+  removeProduct(productId: number): Observable<any> {
+    return this.http.delete(productRemoveUrl + productId);
+  }
 }

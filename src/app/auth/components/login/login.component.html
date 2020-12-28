@@ -1,34 +1,37 @@
+<ngx-spinner
+  bdColor="rgba(151,149,149,0.4)" size="large" color="orange"
+  type="ball-clip-rotate-pulse" fullScreen="true">
+  <p style="font-size: 20px; color: green">Authenticating Credentials ...</p>
+</ngx-spinner>
 <!-- SECTION -->
 <div class="section">
-    <!-- container -->
-    <div class="container">
-      <!-- row -->
-      <div class="row">
-        <div class="col-md-6 d-flex mx-auto flex-column" id="loginPage">
-          <mat-card>
-            <mat-card-title class="text-center">
-              LOGIN
-            </mat-card-title>
-            <form #loginForm="ngForm" autocomplete="off" (ngSubmit)="login(loginForm)">
-              <div class="form-group">
-                <label for="username">Email</label>
-                <input name="username" ngModel required #username="ngModel" class="form-control" id="username" type="text">
+  <div class="container">
+    <div class="card-flex">
+      <div class="col-md-6 col-lg-3">
+        <mat-card>
+          <mat-card-title>LOGIN</mat-card-title>
+          <form #loginForm="ngForm" autocomplete="off" (ngSubmit)="login(loginForm)">
+            <mat-card-content>
+              <mat-form-field>
+                <input matInput name="username" ngModel required #username="ngModel"
+                       type="text" placeholder="username">
+              </mat-form-field>
+              <mat-form-field>
+                <input matInput name="password" ngModel required #password="ngModel"
+                       type="password" placeholder="password">
+              </mat-form-field>
+            </mat-card-content>
+            <mat-card-actions>
+              <div class="align-items-center justify-content-around">
+                <button type="submit" class="btn success-btn btn-sm btn-block"
+                        [disabled]="loginForm.invalid && loginForm.touched">Login
+                </button>
               </div>
-  
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input class="form-control" id="password" type="password" ngModel required #password="ngModel" name="password">
-              </div>
-              <div class="d-flex flex-column align-items-center justify-content-around">
-                <button type="submit" class="btn success-btn btn-sm btn-block" [disabled]="loginForm.invalid && loginForm.touched">Login</button>
-              </div>
-            </form>
-          </mat-card>
-        </div>
+            </mat-card-actions>
+          </form>
+        </mat-card>
       </div>
-      <!-- /row -->
     </div>
-    <!-- /container -->
   </div>
-  <!-- /SECTION -->
-  
+</div>
+<!-- /SECTION -->

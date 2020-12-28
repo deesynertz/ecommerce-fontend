@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { SharedService } from 'src/app/services/shared.service';
-import { UserService } from 'src/app/services/user.service';
+import {Component, OnInit} from '@angular/core';
+import {NgForm} from '@angular/forms';
+import {Router, ActivatedRoute} from '@angular/router';
+import {SharedService} from 'src/app/services/shared.service';
+import {UserService} from 'src/app/services/user.service';
+import {loginResponse} from '../../../model/user.model';
+import {AuthService} from '../../../services/auth.service';
+import {NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
   selector: 'app-login',
@@ -10,43 +13,44 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  showSpinner: boolean;
 
   constructor(
     private router: Router,
+    private authService: AuthService,
     private userService: UserService,
-    private route: ActivatedRoute,
-    private sharedService: SharedService
-  ) { }
+    private sharedService: SharedService,
+    private spinner: NgxSpinnerService,
+  ) {
+  }
 
   ngOnInit() {
-    this.userService.authState$.subscribe(authState => {
-      if (authState) {
-        this.router.navigateByUrl(this.route.snapshot.queryParams.returnUrl || '/profile').then();
-      } else {
-        this.router.navigateByUrl('/login').then();
-      }
-    });
+    // this.authService.authState$.subscribe(authState => {
+    //   if (authState !== true) {
+    //     this.router.navigate(['/login']).then();
+    //   } else {
+    //     this.router.navigate(['/profile']).then();
+    //   }
+    // });
+    // if (!this.authService.isAuthenticated()) {
+    //   this.router.navigate(['/login']).then();
+    //   return false;
+    // }else{
+    //   return true;
+    // }
   }
 
   login(loginForm: NgForm) {
-    const username = loginForm.value.username;
-    const password = loginForm.value.password;
-
     if (loginForm.invalid) {
       return;
     }
 
-    this.userService.login(username,password).subscribe((response:any) => {
-
-      if(response.success_code === 1){
-        loginForm.reset();
-        // // console.log(response);
-        // this.sharedService.successToaster("successfully logedin", 'Login');
-      }else{
-        this.sharedService.warningToaster(response.message, 'Login');
-      }
-
-    });
+    this.spinner.show();
+    const username = loginForm.value.username;
+    const password = loginForm.value.password;
+    this.authService.login(username, password);
+    loginForm.reset();
   }
 
 }
+

@@ -1,14 +1,17 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
-import { CategoryModelServer } from 'src/app/model/category.mode';
-import { ProductModelServer, productServerResponse } from 'src/app/model/products.model';
-import { ProductsService } from 'src/app/services/products.service';
-import { SharedService } from 'src/app/services/shared.service';
-import { AddProductComponent } from '../add-product/add-product.component';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {NgForm} from '@angular/forms';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatSort} from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
+import {CategoryModelServer} from 'src/app/model/category.mode';
+import {ProductModelServer, productServerResponse} from 'src/app/model/products.model';
+import {ProductsService} from 'src/app/services/products.service';
+import {SharedService} from 'src/app/services/shared.service';
+import {AddProductComponent} from '../add-product/add-product.component';
+import {EditProductComponent} from '../edit-product/edit-product.component';
+import {AuthService} from '../../services/auth.service';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-product-view',
@@ -19,27 +22,32 @@ export class ProductViewComponent implements OnInit {
 
   categoriesList: CategoryModelServer[] = [];
   productList: ProductModelServer[] = [];
-
   currentYear = Date.now();
-  
-
-  userId = 2;
 
   dataSource: MatTableDataSource<ProductModelServer>;
-  displayedColumns: string[] = ['Id', 'Title','qty', 'Price', 'Discount', 'Actions'];
+  displayedColumns: string[] = ['Id', 'Title', 'qty', 'Price', 'Discount', 'Actions'];
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   searchKey: string;
 
 
   constructor(
+    private authService: AuthService,
     private productService: ProductsService,
+    private userService: UserService,
     public dialog: MatDialog,
     private sharedService: SharedService
   ) { }
 
   ngOnInit() {
-    this.productService.getProductRespectToUser(this.userId)
+    this.authService.setObservables();
+    this.authService.userData$.subscribe(data => {
+      this.ProductsBelongToUser(data.userId);
+    });
+  }
+
+  ProductsBelongToUser(userId: number): any {
+    return this.userService.getProductRespectToUser(userId)
       .subscribe((prods: productServerResponse) => {
         //this.productList = prods.products;
         this.dataSource = new MatTableDataSource<ProductModelServer>(prods.products);
@@ -51,67 +59,43 @@ export class ProductViewComponent implements OnInit {
           });
         };
       });
-    
-    console.log(this.currentYear);
-
-    // const after = this.datePipe.transform(this.currentYear, 'yyyy-MM-dd');
-  
-    // console.log(after);
   }
 
-    // FIND ALL PRODUCT BELONG TO USER
-    getProductBelongToUser(userId: number): any {
-      return this.productService.getProductRespectToUser(userId)
-        .subscribe((prods: productServerResponse) => {
-          // this.productList = prods.products;
-          this.dataSource = new MatTableDataSource<ProductModelServer>(prods.products);
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.filterPredicate = (data, filter) => {
-            return this.displayedColumns.some(ele => {
-              return ele != 'actions' && data[ele].toLowerCase().indexOf(filter) != -1;
-            });
-          };
-        });
-    }
-  
-    postProduct(productForm: NgForm): any {
-      console.log(productForm);
-    }
-  
-    openDialog(): any {
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.disableClose = true;
-      dialogConfig.autoFocus = true;
-      dialogConfig.width = '60%';
-      this.dialog.open(AddProductComponent, dialogConfig);
-    }
-  
-  
-  
-    onEdit(row) {
-      
-    }
-  
-    onDelete(key){
-      this.sharedService.openConfirmDialog('Are you sure to delete this record ?')
-        .afterClosed().subscribe(res => {
-          // console.log(key);
-          if (res) {
-            // TODO DELETE PRODUCT
-            // this.service.deleteEmployee($key);
-            this.sharedService.infoToaster('Deleted successfully', "Remove Product")
+
+  onCreateProduct() {
+    const config = this.sharedService.dialogConfiguration();
+    this.dialog.open(AddProductComponent, config);
+  }
+
+  onEditProduct(prod) {
+    const config = this.sharedService.dialogConfiguration(prod);
+    this.sharedService.informationData = prod;
+    this.dialog.open(EditProductComponent, config);
+  }
+
+  onDelete(key) {
+    this.sharedService.openConfirmDialog('Are you sure to delete this record ?')
+      .afterClosed().subscribe(res => {
+      if (res) {
+        this.productService.removeProduct(key).subscribe((response: any) => {
+          if (response.success === 1) {
+            this.sharedService.successToaster(response.message, 'Remove Product');
+            this.ngOnInit();
+          } else {
+            this.sharedService.errorToaster(response.message, 'Remove Product');
           }
         });
-    }
-  
-    onSearchClear() {
-      this.searchKey = "";
-      this.applyFilter();
-    }
-  
-    applyFilter() {
-      this.dataSource.filter = this.searchKey.trim().toLowerCase();
-    }
+      }
+    });
+  }
+
+  onSearchClear() {
+    this.searchKey = '';
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    this.dataSource.filter = this.searchKey.trim().toLowerCase();
+  }
 
 }

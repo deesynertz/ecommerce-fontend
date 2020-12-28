@@ -1,0 +1,55 @@
+.thanks-page {
+  margin-left: 20%;
+}
+.receipt_bg {
+  background-image: url("../../../../assets/img/receipt_bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  h6 {
+    font-weight: normal;
+  }
+
+  mat-card-title {
+    margin-top: 120px;
+    padding-top: 20px;
+    margin-bottom: 30px;
+
+    p, h5 {
+      font-weight: normal;
+      color: #1c1b1b;
+    }
+  }
+
+  .receipt-content {
+    margin: 10px;
+    padding-left: 40px;
+
+    .method {
+      font-weight: bold;
+    }
+
+    .summary-title {
+      margin: 20px 0 3px 0;
+    }
+
+    .summary-content {
+      background-color: #F6F9FC;
+      margin-right: 40px;
+
+      .data-summary {
+        margin: 5px;
+        padding: 10px;
+      }
+    }
+  }
+
+  .receipt-footer{
+    margin: 20px 50px;
+
+    a{
+      color: #2782ff;
+      font-weight: normal;
+    }
+  }
+}
