@@ -24,10 +24,11 @@ import {EditProductComponent} from './profile/edit-product/edit-product.componen
 import {JWT_OPTIONS, JwtHelperService} from '@auth0/angular-jwt';
 import {AuthInterceptor} from './interceptors/auth.interceptor';
 
-import { StripeModule } from "stripe-angular"
+import { StripeModule } from 'stripe-angular';
 // Import the library
 import { NgxStripeModule } from 'ngx-stripe';
 import {PaymentFormComponent} from './payment/components/payment-form/payment-form.component';
+
 
 
 
@@ -57,7 +58,7 @@ import {PaymentFormComponent} from './payment/components/payment-form/payment-fo
     ProductsModule,
     SharedModule,
 
-    StripeModule.forRoot("pk_test_x4UJJBUXdYXomNNA5D5D8yci00BHo7cO4a"),
+    StripeModule.forRoot('pk_test_x4UJJBUXdYXomNNA5D5D8yci00BHo7cO4a'),
     NgxStripeModule.forRoot('pk_test_x4UJJBUXdYXomNNA5D5D8yci00BHo7cO4a'),
     // LibraryModule
   ],

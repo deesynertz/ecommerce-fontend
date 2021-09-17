@@ -23,9 +23,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cartService.cartTotal$.subscribe(total => {
-      this.cartTotal = total;
-    });
+    this.cartService.cartTotal$.subscribe(total => this.cartTotal = total);
     this.cartService.cartData$.subscribe(data => this.cartData = data);
     this.authService.authState$.subscribe(authState => this.authState = authState);
   }

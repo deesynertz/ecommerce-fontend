@@ -15,6 +15,7 @@ import {AuthService} from '../../../services/auth.service';
   styleUrls: ['./payment-form.component.scss']
 })
 export class PaymentFormComponent implements OnInit {
+
   @ViewChild(StripeCardComponent) card: StripeCardComponent;
 
   cardOptions: StripeCardElementOptions = {
@@ -81,10 +82,10 @@ export class PaymentFormComponent implements OnInit {
     // console.log(paymentInfo.token);
     // this.orderService.payYourOrder(paymentInfo);
     // this.onDialogClose();
+   
 
     this.stripeService.createToken(this.card.element, {name})
       .subscribe((result) => {
-        console.log(result);
         if (result.token) {
           this.spinner.hide();
           // Use the token to make payment

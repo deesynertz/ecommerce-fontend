@@ -56,7 +56,7 @@
                         <i class="fa fa-eye"></i>
                       </button>
                       <button [disabled]="order.status == 1"
-                              mat-icon-button color="warn" (click)="null">
+                              mat-icon-button color="warn" (click)="deleteOrder(order.id)">
 <!--                        <mat-icon>delete_outline</mat-icon>-->
                         <i class="fa fa-trash-alt"></i>
                       </button>

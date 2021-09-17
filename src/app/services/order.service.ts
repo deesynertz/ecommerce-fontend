@@ -1,6 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {ordersForBuyerUrl, ordersForSellerUrl, orderSingleUrl, paymentForNewOrderUrl} from '../config/api';
+import {orderDeleteSingleUrl, ordersForBuyerUrl, ordersForSellerUrl, orderSingleUrl, paymentForNewOrderUrl} from '../config/api';
 import {Observable} from 'rxjs';
 import {ProductResponseModel, productServerResponse} from '../model/products.model';
 import {buyerOrdersResponse} from '../model/orders';
@@ -34,14 +34,20 @@ export class OrderService {
       return this.http.get<productServerResponse>(ordersForSellerUrl + userId);
   }
 
+  deleteOrder(orderId: number) {
+    return this.http.delete(orderDeleteSingleUrl + orderId).toPromise();
+  }
+
   payYourOrder(paymentData) {
+
     let orderNumber = paymentData.orderNumber;
     // let receiptNo = paymentData.token;
 
     return this.http.post(paymentForNewOrderUrl, paymentData)
       .subscribe((response: any) => {
-        console.log(response);
+
         if (response.success) {
+
           this.sharedService.successToaster(`${response.message}`, 'PAYMENT');
           this.getSingleOrder(orderNumber).then((prods: any) => {
 
@@ -58,7 +64,7 @@ export class OrderService {
           });
         } else {
           this.spinner.hide();
-          this.sharedService.errorToaster(`${response.err}`, 'PAYMENT');
+          this.sharedService.errorToaster(`${response.message}`, 'PAYMENT');
         }
       });
   }

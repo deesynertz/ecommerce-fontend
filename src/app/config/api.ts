@@ -19,7 +19,8 @@ export const ordersAllUrl = base_url + '/orders';
 export const orderSingleUrl = base_url + '/orders/';
 export const orderNewUrl = base_url + '/orders/create';
 export const ordersForSellerUrl = base_url + '/orders/seller/';
-export const ordersForBuyerUrl = base_url + '/orders/buyer/'
+export const ordersForBuyerUrl = base_url + '/orders/buyer/';
+export const orderDeleteSingleUrl = base_url + '/orders/delete/';
 
 // AUTH
 export const authLoginUrl = base_url + '/auth/login';

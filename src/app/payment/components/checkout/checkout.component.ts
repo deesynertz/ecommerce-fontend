@@ -64,6 +64,19 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+
+  deleteOrder(orderId) {
+    this.orderService.deleteOrder(orderId).then((response:any) => {
+
+      if(response.success === 1 ){
+        this.OrderMadeBelongToUser(this.userData.userId);
+        this.sharedService.successToaster(response.message, 'Order Alert');
+      }else{
+        this.sharedService.errorToaster(response.message, 'Order Alert');
+      }
+    });
+  }
+
   onOpenPaymentDialog() {
     const info = {
       userId: this.userData.userId,

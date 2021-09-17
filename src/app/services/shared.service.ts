@@ -161,6 +161,7 @@ export class SharedService {
       // for insert new record
       const formData = new FormData();
       formData.append('prodImage', this.images);
+      
       this.productService.postImage(formData).subscribe((response: any) => {
         // this.imageUrl = response.fileToUpload;
         this.imageUrl = this.url_without_name + response.fileToUpload;
